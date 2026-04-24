@@ -1,0 +1,1369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Kytech Admin – Inokom Assessment Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --bg:#f7f5f0;--white:#fff;--ink:#1a1814;--ink2:#3d3a35;--muted:#8a8680;
+      --border:#e2ded8;--border2:#ccc9c2;--gold:#b8922a;--gold2:#d4a840;--gold-bg:#faf6ee;
+      --D:#c84b3b;--D-bg:#fdf1ef;--I:#d4820a;--I-bg:#fef8f0;--S:#2e8b57;--S-bg:#f0f9f4;
+      --C:#2c5f9e;--C-bg:#eff5fc;--dep:#7c4daa;--dep-bg:#f7f2fd;--anx:#c84b3b;--anx-bg:#fdf1ef;
+      --str:#c07a0a;--str-bg:#fef8f0;--radius:12px;
+      --shadow:0 1px 3px rgba(0,0,0,.06),0 4px 16px rgba(0,0,0,.04);
+    }
+
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+    body {
+      font-family:'Inter',sans-serif;
+      background:var(--bg);
+      color:var(--ink);
+      font-size:15px;
+      line-height:1.6;
+      min-height:100vh;
+    }
+
+    /* ── HEADER ── */
+    header {
+      background:var(--ink);
+      padding:16px 32px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      position:sticky;top:0;z-index:50;
+    }
+
+    .logo {
+      font-family:'Playfair Display',serif;
+      font-size:18px;
+      color:#fff;
+      display:flex;
+      align-items:center;
+      gap:10px;
+    }
+
+    .logo-dot {
+      width:8px;height:8px;
+      background:var(--gold2);
+      border-radius:50%;
+      box-shadow:0 0 10px var(--gold2);
+      animation:pulse 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%,100%{opacity:1;transform:scale(1);}
+      50%{opacity:.5;transform:scale(.7);}
+    }
+
+    .header-badge {
+      font-size:11px;
+      font-weight:600;
+      letter-spacing:.1em;
+      text-transform:uppercase;
+      color:var(--gold2);
+    }
+
+    /* ── LOGIN ── */
+    #loginScreen {
+      min-height:calc(100vh - 56px);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:40px 20px;
+    }
+
+    .login-card {
+      background:var(--white);
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      padding:40px 36px;
+      width:100%;
+      max-width:400px;
+      box-shadow:0 8px 40px rgba(0,0,0,.08);
+      animation:fadeUp .4s ease both;
+    }
+
+    @keyframes fadeUp {
+      from{opacity:0;transform:translateY(16px);}
+      to{opacity:1;transform:translateY(0);}
+    }
+
+    .login-logo {
+      font-size:11px;
+      font-weight:600;
+      letter-spacing:.1em;
+      text-transform:uppercase;
+      color:var(--gold);
+      margin-bottom:10px;
+    }
+
+    .login-title {
+      font-family:'Playfair Display',serif;
+      font-size:24px;
+      margin-bottom:6px;
+      color:var(--ink);
+    }
+
+    .login-sub {
+      font-size:13px;
+      color:var(--muted);
+      margin-bottom:28px;
+      line-height:1.6;
+    }
+
+    label {
+      display:block;
+      font-size:13px;
+      font-weight:500;
+      margin-bottom:6px;
+      color:var(--ink2);
+    }
+
+    input[type="password"] {
+      width:100%;
+      padding:10px 14px;
+      border:1.5px solid var(--border);
+      border-radius:8px;
+      font-family:'Inter',sans-serif;
+      font-size:14px;
+      color:var(--ink);
+      background:var(--bg);
+      outline:none;
+      transition:border .15s;
+      margin-bottom:14px;
+      -webkit-appearance:none;
+    }
+
+    input[type="password"]:focus {
+      border-color:var(--gold);
+    }
+
+    .error-msg {
+      display:none;
+      color:var(--D);
+      font-size:13px;
+      padding:10px 14px;
+      background:var(--D-bg);
+      border:1px solid rgba(200,75,59,.2);
+      border-radius:6px;
+      margin-bottom:12px;
+    }
+
+    .btn {
+      border:none;
+      border-radius:50px;
+      padding:12px 24px;
+      font-family:'Inter',sans-serif;
+      font-size:13px;
+      font-weight:500;
+      cursor:pointer;
+      transition:all .2s;
+      display:inline-flex;
+      align-items:center;
+      gap:7px;
+    }
+
+    .btn-primary {
+      background:var(--gold);
+      color:#fff;
+      width:100%;
+      justify-content:center;
+    }
+
+    .btn-primary:hover{background:var(--gold2);}
+
+    .btn-outline {
+      background:transparent;
+      color:var(--ink);
+      border:1.5px solid var(--border2);
+    }
+
+    .btn-outline:hover{border-color:var(--gold);color:var(--gold);}
+
+    .btn-danger {
+      background:var(--D-bg);
+      color:var(--D);
+      border:1px solid rgba(200,75,59,.2);
+    }
+
+    .btn-danger:hover{background:rgba(200,75,59,.15);}
+
+    /* ── DASHBOARD ── */
+    #dashboard {
+      display:none;
+      padding:32px;
+      max-width:1300px;
+      margin:0 auto;
+      animation:fadeUp .4s ease both;
+    }
+
+    .dash-header {
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      margin-bottom:28px;
+      flex-wrap:wrap;
+      gap:16px;
+    }
+
+    .dash-title {
+      font-family:'Playfair Display',serif;
+      font-size:26px;
+      color:var(--ink);
+      margin-bottom:4px;
+    }
+
+    .dash-subtitle {
+      font-size:12px;
+      color:var(--muted);
+    }
+
+    .dash-actions {
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      align-items:center;
+    }
+
+    /* ── STAT CARDS ── */
+    .stats-row {
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
+      gap:14px;
+      margin-bottom:28px;
+    }
+
+    .stat-card {
+      background:var(--white);
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      padding:18px 20px;
+      box-shadow:var(--shadow);
+    }
+
+    .stat-label {
+      font-size:11px;
+      font-weight:600;
+      letter-spacing:.08em;
+      text-transform:uppercase;
+      color:var(--muted);
+      margin-bottom:6px;
+    }
+
+    .stat-value {
+      font-family:'Playfair Display',serif;
+      font-size:2rem;
+      color:var(--gold);
+      line-height:1.1;
+    }
+
+    .stat-sub {
+      font-size:11px;
+      color:var(--muted);
+      margin-top:2px;
+    }
+
+    /* ── SECTION DIVIDER ── */
+    .section-divider {
+      display:flex;
+      align-items:center;
+      gap:12px;
+      margin:28px 0 16px;
+    }
+
+    .section-divider-line{flex:1;height:1px;background:var(--border)}
+    .section-divider-label{font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);white-space:nowrap}
+
+    /* ── FILTER ── */
+    .filter-row {
+      display:flex;
+      align-items:center;
+      gap:12px;
+      margin-bottom:20px;
+      flex-wrap:wrap;
+    }
+
+    .filter-label {
+      font-size:13px;
+      font-weight:500;
+      color:var(--ink2);
+    }
+
+    select {
+      background:var(--white);
+      border:1.5px solid var(--border);
+      border-radius:8px;
+      padding:8px 14px;
+      color:var(--ink);
+      font-family:'Inter',sans-serif;
+      font-size:13px;
+      outline:none;
+      cursor:pointer;
+      transition:border .15s;
+      -webkit-appearance:none;
+    }
+
+    select:focus{border-color:var(--gold);}
+
+    /* ── GRAPH SECTION ── */
+    .graph-section {
+      background:var(--white);
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      padding:24px;
+      box-shadow:var(--shadow);
+      margin-bottom:28px;
+    }
+
+    .graph-title {
+      font-size:13px;
+      font-weight:600;
+      color:var(--ink2);
+      margin-bottom:4px;
+    }
+
+    .graph-sub {
+      font-size:11px;
+      color:var(--muted);
+      margin-bottom:20px;
+    }
+
+    .graph-tabs {
+      display:flex;
+      gap:6px;
+      margin-bottom:20px;
+      flex-wrap:wrap;
+    }
+
+    .graph-tab {
+      border:1.5px solid var(--border);
+      background:var(--bg);
+      border-radius:50px;
+      padding:6px 16px;
+      font-size:12px;
+      font-weight:500;
+      cursor:pointer;
+      transition:all .15s;
+      color:var(--ink2);
+    }
+
+    .graph-tab.active {
+      background:var(--gold);
+      border-color:var(--gold);
+      color:#fff;
+    }
+
+    .graph-canvas-wrap {
+      position:relative;
+      height:280px;
+    }
+
+    canvas {
+      max-height:280px;
+    }
+
+    /* ── PARTICIPANT GRID ── */
+    .participants-grid {
+      display:grid;
+      grid-template-columns:repeat(auto-fill,minmax(340px,1fr));
+      gap:14px;
+      margin-bottom:28px;
+    }
+
+    .p-card {
+      background:var(--white);
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      padding:18px 20px;
+      box-shadow:var(--shadow);
+      transition:border-color .2s;
+    }
+
+    .p-card:hover{border-color:var(--gold2);}
+
+    .p-card-header {
+      display:flex;
+      justify-content:space-between;
+      align-items:flex-start;
+      margin-bottom:12px;
+    }
+
+    .p-name {
+      font-size:15px;
+      font-weight:500;
+      color:var(--ink);
+      margin-bottom:2px;
+    }
+
+    .p-meta {
+      font-size:12px;
+      color:var(--muted);
+    }
+
+    .p-num {
+      font-family:'Playfair Display',serif;
+      font-size:22px;
+      color:var(--gold);
+      opacity:.6;
+    }
+
+    /* DASS row */
+    .dass-row {
+      display:grid;
+      grid-template-columns:repeat(3,1fr);
+      gap:6px;
+      margin-bottom:12px;
+    }
+
+    .dass-chip {
+      text-align:center;
+      padding:6px 4px;
+      border-radius:8px;
+      border:1px solid var(--border);
+    }
+
+    .dass-chip-label {
+      font-size:9px;
+      font-weight:600;
+      letter-spacing:.06em;
+      text-transform:uppercase;
+      margin-bottom:3px;
+    }
+
+    .dass-chip-score {
+      font-size:18px;
+      font-weight:300;
+      line-height:1;
+      margin-bottom:3px;
+    }
+
+    .dass-chip-badge {
+      font-size:9px;
+      font-weight:600;
+      padding:2px 6px;
+      border-radius:8px;
+      display:inline-block;
+    }
+
+    /* DISC row */
+    .disc-row {
+      display:flex;
+      align-items:center;
+      gap:10px;
+      margin-bottom:10px;
+      padding:10px 12px;
+      background:var(--bg);
+      border-radius:8px;
+    }
+
+    .disc-badge {
+      width:36px;height:36px;
+      border-radius:8px;
+      display:flex;align-items:center;justify-content:center;
+      font-size:16px;font-weight:700;
+      color:#fff;flex-shrink:0;
+    }
+
+    .disc-info-name {
+      font-size:13px;
+      font-weight:500;
+    }
+
+    .disc-info-counts {
+      font-size:11px;
+      color:var(--muted);
+    }
+
+    .disc-pct-wrap {
+      margin-left:auto;
+      text-align:right;
+    }
+
+    .disc-pct {
+      font-size:14px;
+      font-weight:600;
+    }
+
+    .disc-bars-mini {
+      display:flex;
+      gap:3px;
+      align-items:flex-end;
+      height:20px;
+      margin-top:4px;
+    }
+
+    .disc-bar-mini {
+      width:8px;
+      border-radius:2px 2px 0 0;
+      min-height:2px;
+    }
+
+    /* LRI row */
+    .lri-row {
+      display:flex;
+      align-items:center;
+      gap:12px;
+    }
+
+    .lri-gauge-wrap {
+      flex-shrink:0;
+    }
+
+    .lri-info {
+      flex:1;
+    }
+
+    .lri-label-text {
+      font-size:13px;
+      font-weight:500;
+      margin-bottom:2px;
+    }
+
+    .lri-sub {
+      font-size:11px;
+      color:var(--muted);
+    }
+
+    .lri-track {
+      height:5px;
+      background:var(--border);
+      border-radius:3px;
+      overflow:hidden;
+      margin-top:6px;
+    }
+
+    .lri-fill {
+      height:100%;
+      border-radius:3px;
+      transition:width 1.2s cubic-bezier(.4,0,.2,1);
+    }
+
+    /* ── TABLE ── */
+    .table-wrap {
+      background:var(--white);
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      overflow:hidden;
+      box-shadow:var(--shadow);
+      margin-bottom:28px;
+    }
+
+    .table-header-bar {
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      padding:14px 20px;
+      border-bottom:1px solid var(--border);
+    }
+
+    .table-title {
+      font-size:13px;
+      font-weight:600;
+      color:var(--ink);
+    }
+
+    .live-indicator {
+      display:flex;
+      align-items:center;
+      gap:6px;
+      font-size:11px;
+      color:var(--gold);
+    }
+
+    .live-dot {
+      width:6px;height:6px;
+      background:var(--gold);
+      border-radius:50%;
+      animation:pulse 1.5s ease-in-out infinite;
+    }
+
+    .results-table {
+      width:100%;
+      border-collapse:collapse;
+      font-size:13px;
+    }
+
+    .results-table th {
+      background:var(--bg);
+      padding:10px 16px;
+      text-align:left;
+      font-size:10px;
+      text-transform:uppercase;
+      letter-spacing:.07em;
+      color:var(--muted);
+      font-weight:600;
+      border-bottom:1px solid var(--border);
+    }
+
+    .results-table td {
+      padding:12px 16px;
+      border-bottom:1px solid var(--border);
+      vertical-align:middle;
+      color:var(--ink2);
+    }
+
+    .results-table tr:last-child td{border-bottom:none;}
+    .results-table tr:hover td{background:var(--gold-bg);}
+
+    .badge {
+      display:inline-block;
+      padding:2px 8px;
+      border-radius:20px;
+      font-size:10px;
+      font-weight:600;
+    }
+
+    .badge-normal{background:var(--S-bg);color:var(--S)}
+    .badge-mild{background:var(--I-bg);color:var(--I)}
+    .badge-moderate{background:var(--D-bg);color:var(--D)}
+    .badge-severe,.badge-extremelysevere{background:#fdf1ef;color:#8e1010}
+    .badge-disc-d{background:var(--D-bg);color:var(--D)}
+    .badge-disc-i{background:var(--I-bg);color:var(--I)}
+    .badge-disc-s{background:var(--S-bg);color:var(--S)}
+    .badge-disc-c{background:var(--C-bg);color:var(--C)}
+
+    .mono{font-size:11px;color:var(--muted);}
+
+    /* ── DELETE BUTTON ── */
+    .btn-delete {
+      background:transparent;
+      border:1.5px solid var(--border2);
+      color:var(--muted);
+      border-radius:50px;
+      padding:5px 11px;
+      font-family:'Inter',sans-serif;
+      font-size:11px;
+      font-weight:500;
+      cursor:pointer;
+      transition:all .2s;
+      display:inline-flex;
+      align-items:center;
+      gap:5px;
+      margin-top:12px;
+      width:100%;
+      justify-content:center;
+    }
+
+    .btn-delete:hover {
+      background:var(--D-bg);
+      border-color:var(--D);
+      color:var(--D);
+    }
+
+    /* ── CONFIRM MODAL ── */
+    .modal-overlay {
+      display:none;
+      position:fixed;
+      inset:0;
+      background:rgba(26,24,20,.5);
+      backdrop-filter:blur(4px);
+      z-index:100;
+      align-items:center;
+      justify-content:center;
+      padding:20px;
+    }
+
+    .modal-overlay.active { display:flex; }
+
+    .modal-card {
+      background:var(--white);
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      padding:28px 24px;
+      max-width:360px;
+      width:100%;
+      box-shadow:0 20px 60px rgba(0,0,0,.15);
+      animation:fadeUp .2s ease both;
+    }
+
+    .modal-icon { font-size:28px; margin-bottom:12px; }
+
+    .modal-title {
+      font-family:'Playfair Display',serif;
+      font-size:18px;
+      color:var(--ink);
+      margin-bottom:6px;
+    }
+
+    .modal-sub {
+      font-size:13px;
+      color:var(--muted);
+      line-height:1.6;
+      margin-bottom:20px;
+    }
+
+    .modal-name {
+      font-weight:600;
+      color:var(--ink);
+    }
+
+    .modal-actions {
+      display:flex;
+      gap:10px;
+    }
+
+    .modal-actions .btn { flex:1; justify-content:center; }
+
+    .btn-confirm-delete {
+      background:var(--D);
+      color:#fff;
+      border:none;
+      border-radius:50px;
+      padding:11px 20px;
+      font-family:'Inter',sans-serif;
+      font-size:13px;
+      font-weight:500;
+      cursor:pointer;
+      transition:all .2s;
+    }
+
+    .btn-confirm-delete:hover { background:#b03a2e; }
+
+    .btn-cancel {
+      background:var(--bg);
+      color:var(--ink2);
+      border:1.5px solid var(--border2);
+      border-radius:50px;
+      padding:11px 20px;
+      font-family:'Inter',sans-serif;
+      font-size:13px;
+      font-weight:500;
+      cursor:pointer;
+      transition:all .2s;
+    }
+
+    .btn-cancel:hover { border-color:var(--gold); color:var(--gold); }
+
+    /* ── EMPTY / LOADING ── */
+    .state-box{padding:60px 20px;text-align:center;color:var(--muted);}
+    .state-icon{font-size:2.5rem;margin-bottom:12px;}
+    .state-msg{font-size:13px;}
+
+    /* ── TIMER BAR ── */
+    #timerBar {
+      height:2px;
+      background:var(--gold);
+      width:100%;
+      border-radius:0;
+      transform-origin:left;
+      transition:transform 30s linear;
+      transform:scaleX(0);
+    }
+
+    .timer-wrap{background:var(--bg);overflow:hidden;}
+
+    @media(max-width:768px){
+      #dashboard{padding:20px 16px;}
+      .participants-grid{grid-template-columns:1fr;}
+    }
+  </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <div class="logo">
+    <div class="logo-dot"></div>
+    Kytech Scientific
+  </div>
+  <span class="header-badge">Admin Dashboard</span>
+</header>
+
+<!-- LOGIN -->
+<div id="loginScreen">
+  <div class="login-card">
+    <div class="login-logo">Kytech Scientific Sdn Bhd</div>
+    <h2 class="login-title">Admin Access</h2>
+    <p class="login-sub">Enter your password to view live assessment results.</p>
+    <label for="passwordInput">Admin Password</label>
+    <input type="password" id="passwordInput" placeholder="••••••••••" onkeydown="if(event.key==='Enter') checkPassword()" />
+    <div class="error-msg" id="errorMsg">⚠ Incorrect password. Please try again.</div>
+    <button class="btn btn-primary" onclick="checkPassword()">Access Dashboard →</button>
+  </div>
+</div>
+
+<!-- DASHBOARD -->
+<div id="dashboard">
+
+  <div class="dash-header">
+    <div>
+      <div class="dash-title">Live Results Dashboard</div>
+      <div class="dash-subtitle" id="lastRefresh">Fetching from JSONBin…</div>
+    </div>
+    <div class="dash-actions">
+      <button class="btn btn-outline" onclick="loadResults()">↻ Refresh</button>
+      <button class="btn btn-outline" onclick="exportCSV()">↓ Export CSV</button>
+      <button class="btn btn-danger" onclick="logout()">Logout</button>
+    </div>
+  </div>
+
+  <!-- STAT CARDS -->
+  <div class="stats-row">
+    <div class="stat-card">
+      <div class="stat-label">Total Submissions</div>
+      <div class="stat-value" id="statTotal">–</div>
+      <div class="stat-sub">Participants assessed</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Departments</div>
+      <div class="stat-value" id="statDepts">–</div>
+      <div class="stat-sub">Unique departments</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Avg DASS Score</div>
+      <div class="stat-value" id="statAvgDASS" style="font-size:1.6rem">–</div>
+      <div class="stat-sub">Depression / Anxiety / Stress</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Avg Leadership %</div>
+      <div class="stat-value" id="statAvgLRI" style="color:var(--dep)">–</div>
+      <div class="stat-sub">LRI readiness index</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Latest Entry</div>
+      <div class="stat-value" id="statLatest" style="font-size:1rem;padding-top:8px">–</div>
+    </div>
+  </div>
+
+  <!-- AGGREGATE GRAPH -->
+  <div class="graph-section">
+    <div class="graph-title">Participant Score Overview</div>
+    <div class="graph-sub">Total scores across all participants — DASS Part 1 (Depression, Anxiety, Stress), DISC personality, and Leadership Readiness Index (LRI)</div>
+    <div class="graph-tabs">
+      <button class="graph-tab active" onclick="switchGraph('dass')">DASS Scores</button>
+      <button class="graph-tab" onclick="switchGraph('disc')">DISC Personality</button>
+      <button class="graph-tab" onclick="switchGraph('lri')">Leadership (LRI)</button>
+      <button class="graph-tab" onclick="switchGraph('all')">All Overview</button>
+    </div>
+    <div class="graph-canvas-wrap">
+      <canvas id="mainChart"></canvas>
+    </div>
+  </div>
+
+  <!-- FILTER -->
+  <div class="filter-row">
+    <span class="filter-label">Filter by Department:</span>
+    <select id="deptFilter" onchange="applyFilter()">
+      <option value="all">All Departments</option>
+    </select>
+  </div>
+
+  <!-- PARTICIPANT CARDS -->
+  <div class="section-divider">
+    <div class="section-divider-line"></div>
+    <div class="section-divider-label">Individual Participant Results</div>
+    <div class="section-divider-line"></div>
+  </div>
+  <div class="participants-grid" id="participantsGrid">
+    <div class="state-box"><div class="state-icon">⏳</div><div class="state-msg">Loading results from JSONBin…</div></div>
+  </div>
+
+  <!-- RAW TABLE -->
+  <div class="section-divider">
+    <div class="section-divider-line"></div>
+    <div class="section-divider-label">Raw Data Table</div>
+    <div class="section-divider-line"></div>
+  </div>
+  <div class="table-wrap">
+    <div class="table-header-bar">
+      <span class="table-title">All Submissions</span>
+      <span class="live-indicator"><span class="live-dot"></span> Auto-refreshes every 30s</span>
+    </div>
+    <div class="timer-wrap"><div id="timerBar"></div></div>
+    <div id="tableContainer">
+      <div class="state-box"><div class="state-icon">⏳</div><div class="state-msg">Loading…</div></div>
+    </div>
+  </div>
+
+</div>
+
+<!-- DELETE CONFIRM MODAL -->
+<div class="modal-overlay" id="deleteModal">
+  <div class="modal-card">
+    <div class="modal-icon">🗑️</div>
+    <div class="modal-title">Delete Participant?</div>
+    <div class="modal-sub">You are about to permanently remove <span class="modal-name" id="modalName">–</span> from the dataset. This cannot be undone.</div>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeModal()">Cancel</button>
+      <button class="btn-confirm-delete" onclick="confirmDelete()">Delete</button>
+    </div>
+  </div>
+</div>
+
+<!-- Chart.js CDN -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+
+<script>
+  // ─────────────────────────────────────────────
+  const API_KEY  = "$2a$10$DvOUZASCiyYzftTBY7a.Mu5yK3t7KCdWPO7qem9dCPbXnGzd9xnl2";
+  const BIN_ID   = "69ea2206aaba8821972d0cfd";
+  const PASSWORD = "kytech2024";
+  // ─────────────────────────────────────────────
+
+  let allResults = [];
+  let filteredResults = [];
+  let isLoggedIn = false;
+  let timerInterval = null;
+  let mainChart = null;
+  let currentGraph = 'dass';
+
+  const discColors = {D:'#c84b3b',I:'#d4820a',S:'#2e8b57',C:'#2c5f9e'};
+  const discNames  = {D:'The Driver',I:'The Influencer',S:'The Supporter',C:'The Analyst'};
+
+  // ── LOGIN ──────────────────────────────────────
+  function checkPassword() {
+    const val = document.getElementById("passwordInput").value;
+    if (val === PASSWORD) {
+      isLoggedIn = true;
+      document.getElementById("loginScreen").style.display = "none";
+      document.getElementById("dashboard").style.display = "block";
+      loadResults();
+      startAutoRefresh();
+    } else {
+      document.getElementById("errorMsg").style.display = "block";
+    }
+  }
+
+  function logout() {
+    isLoggedIn = false;
+    clearInterval(timerInterval);
+    if(mainChart){mainChart.destroy();mainChart=null;}
+    document.getElementById("loginScreen").style.display = "flex";
+    document.getElementById("dashboard").style.display = "none";
+    document.getElementById("passwordInput").value = "";
+    document.getElementById("errorMsg").style.display = "none";
+  }
+
+  // ── LOAD ──────────────────────────────────────
+  async function loadResults() {
+    try {
+      document.getElementById("lastRefresh").textContent = "Refreshing…";
+      const res = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}/latest`, {
+        headers: { "X-Master-Key": API_KEY }
+      });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const data = await res.json();
+      const raw = data.record?.participants || data.record || [];
+      allResults = raw.filter(r => r.name && r.name !== "");
+      document.getElementById("lastRefresh").textContent = `Last updated: ${new Date().toLocaleTimeString()}`;
+      updateStats();
+      populateFilter();
+      applyFilter();
+      resetTimer();
+    } catch (err) {
+      document.getElementById("lastRefresh").textContent = "Error loading data";
+      document.getElementById("participantsGrid").innerHTML = `<div class="state-box"><div class="state-icon">❌</div><div class="state-msg">Failed to load: ${err.message}</div></div>`;
+    }
+  }
+
+  // ── STATS ──────────────────────────────────────
+  function updateStats() {
+    document.getElementById("statTotal").textContent = allResults.length;
+    const depts = new Set(allResults.map(r=>r.dept||r.department).filter(Boolean));
+    document.getElementById("statDepts").textContent = depts.size || 0;
+
+    if (allResults.length) {
+      const avgDep = avg(allResults.map(r=>+r.dep||0));
+      const avgAnx = avg(allResults.map(r=>+r.anx||0));
+      const avgStr = avg(allResults.map(r=>+r.str||0));
+      document.getElementById("statAvgDASS").textContent = `${avgDep} / ${avgAnx} / ${avgStr}`;
+      const avgLRI = avg(allResults.map(r=>+r.lriPercent||0));
+      document.getElementById("statAvgLRI").textContent = `${avgLRI}%`;
+      const last = allResults[allResults.length-1];
+      document.getElementById("statLatest").textContent = last.name || "–";
+    } else {
+      document.getElementById("statAvgDASS").textContent = "–";
+      document.getElementById("statAvgLRI").textContent = "–";
+      document.getElementById("statLatest").textContent = "–";
+    }
+  }
+
+  function avg(arr){
+    if(!arr.length) return 0;
+    return Math.round(arr.reduce((a,b)=>a+b,0)/arr.length);
+  }
+
+  // ── FILTER ────────────────────────────────────
+  function populateFilter() {
+    const sel = document.getElementById("deptFilter");
+    const depts = [...new Set(allResults.map(r=>r.dept||r.department).filter(Boolean))].sort();
+    const cur = sel.value;
+    sel.innerHTML = `<option value="all">All Departments</option>`;
+    depts.forEach(d=>{
+      const o = document.createElement("option");
+      o.value=d; o.textContent=d;
+      if(d===cur) o.selected=true;
+      sel.appendChild(o);
+    });
+  }
+
+  function applyFilter() {
+    const dept = document.getElementById("deptFilter").value;
+    filteredResults = dept === "all"
+      ? allResults
+      : allResults.filter(r=>(r.dept||r.department)===dept);
+    renderParticipantCards(filteredResults);
+    renderTable(filteredResults);
+    renderChart(filteredResults, currentGraph);
+  }
+
+  // ── PARTICIPANT CARDS ──────────────────────────
+  function renderParticipantCards(rows) {
+    const grid = document.getElementById("participantsGrid");
+    if (!rows.length) {
+      grid.innerHTML = `<div class="state-box"><div class="state-icon">📭</div><div class="state-msg">No submissions yet.</div></div>`;
+      return;
+    }
+
+    const sevBadge = (label) => {
+      const cls = label ? 'badge-'+label.toLowerCase().replace(/\s+/g,'') : 'badge-normal';
+      return `<span class="badge ${cls}">${label||'–'}</span>`;
+    };
+
+    const lriColor = (p) => p>=80?'#2e8b57':p>=60?'#d4820a':p>=40?'#2c5f9e':'#8a8680';
+
+    grid.innerHTML = rows.map((r,i)=>{
+      const dep = +r.dep||0, anx = +r.anx||0, str = +r.str||0;
+      const disc = r.disc||'–';
+      const lriPct = +r.lriPercent||0;
+      const lriLbl = r.lriLabel||(lriPct>=80?'High Potential Leader':lriPct>=60?'Emerging Leader':lriPct>=40?'Developing Potential':'Foundation Building');
+      const dc = r.discCounts||{D:0,I:0,S:0,C:0};
+      const maxDISC = Math.max(dc.D||0,dc.I||0,dc.S||0,dc.C||0);
+      const lriCol = lriColor(lriPct);
+      const gc = 2*Math.PI*18;
+      const gd = (lriPct/100)*gc;
+      // find the true index in allResults for safe deletion
+      const globalIdx = allResults.indexOf(r);
+
+      return `
+      <div class="p-card" id="pcard-${globalIdx}">
+        <div class="p-card-header">
+          <div>
+            <div class="p-name">${r.name||'–'}</div>
+            <div class="p-meta">${[r.dept||r.department,r.role,r.years].filter(Boolean).join(' · ')}</div>
+          </div>
+          <div class="p-num">#${String(i+1).padStart(2,'0')}</div>
+        </div>
+
+        <!-- DASS -->
+        <div class="dass-row">
+          <div class="dass-chip" style="background:var(--dep-bg);border-color:rgba(124,77,170,.15)">
+            <div class="dass-chip-label" style="color:var(--dep)">Depression</div>
+            <div class="dass-chip-score" style="color:var(--dep)">${dep}</div>
+            ${sevBadge(r.depLabel)}
+          </div>
+          <div class="dass-chip" style="background:var(--anx-bg);border-color:rgba(200,75,59,.15)">
+            <div class="dass-chip-label" style="color:var(--anx)">Anxiety</div>
+            <div class="dass-chip-score" style="color:var(--anx)">${anx}</div>
+            ${sevBadge(r.anxLabel)}
+          </div>
+          <div class="dass-chip" style="background:var(--str-bg);border-color:rgba(192,122,10,.15)">
+            <div class="dass-chip-label" style="color:var(--str)">Stress</div>
+            <div class="dass-chip-score" style="color:var(--str)">${str}</div>
+            ${sevBadge(r.strLabel)}
+          </div>
+        </div>
+
+        <!-- DISC -->
+        <div class="disc-row">
+          <div class="disc-badge" style="background:${discColors[disc]||'#8a8680'}">${disc}</div>
+          <div>
+            <div class="disc-info-name">${discNames[disc]||disc}</div>
+            <div class="disc-info-counts">${['D','I','S','C'].map(t=>`<span style="color:${discColors[t]};font-weight:600">${t}</span>:${dc[t]||0}`).join(' ')}</div>
+          </div>
+          <div class="disc-pct-wrap">
+            <div class="disc-pct" style="color:${discColors[disc]||'#8a8680'}">${maxDISC>0?Math.round(((dc[disc]||0)/20)*100):0}%</div>
+            <div class="disc-bars-mini">
+              ${['D','I','S','C'].map(t=>`<div class="disc-bar-mini" style="background:${discColors[t]};height:${maxDISC>0?Math.max(2,Math.round(((dc[t]||0)/maxDISC)*20)):2}px"></div>`).join('')}
+            </div>
+          </div>
+        </div>
+
+        <!-- LRI -->
+        <div class="lri-row">
+          <div class="lri-gauge-wrap">
+            <svg width="44" height="44" viewBox="0 0 44 44">
+              <circle cx="22" cy="22" r="18" fill="none" stroke="var(--border)" stroke-width="4"/>
+              <circle cx="22" cy="22" r="18" fill="none" stroke="${lriCol}" stroke-width="4"
+                stroke-dasharray="${((lriPct/100)*2*Math.PI*18).toFixed(1)} ${(2*Math.PI*18).toFixed(1)}"
+                stroke-dashoffset="${(2*Math.PI*18/4).toFixed(1)}"
+                stroke-linecap="round"/>
+              <text x="22" y="26" text-anchor="middle" font-size="9" font-weight="600" fill="${lriCol}" font-family="Inter,sans-serif">${lriPct}%</text>
+            </svg>
+          </div>
+          <div class="lri-info">
+            <div class="lri-label-text" style="color:${lriCol}">${lriLbl.split('/')[0].trim()}</div>
+            <div class="lri-sub">LRI: ${r.lriTotal||'–'}/32 · Score: ${lriPct}%</div>
+            <div class="lri-track"><div class="lri-fill" style="width:${lriPct}%;background:${lriCol}"></div></div>
+          </div>
+        </div>
+
+        <!-- DELETE -->
+        <button class="btn-delete" onclick="openDeleteModal(${globalIdx}, '${(r.name||'').replace(/'/g,"\\'")}')">
+          🗑 Remove this entry
+        </button>
+      </div>`;
+    }).join('');
+  }
+
+  // ── GRAPH ──────────────────────────────────────
+  function switchGraph(type) {
+    currentGraph = type;
+    document.querySelectorAll('.graph-tab').forEach(t=>t.classList.remove('active'));
+    event.target.classList.add('active');
+    renderChart(filteredResults, type);
+  }
+
+  function renderChart(rows, type) {
+    const ctx = document.getElementById('mainChart').getContext('2d');
+    if (mainChart) { mainChart.destroy(); mainChart = null; }
+    if (!rows.length) return;
+
+    const labels = rows.map((r,i)=> r.name ? r.name.split(' ')[0]+'…' : `P${i+1}`);
+
+    let config;
+
+    if (type === 'dass') {
+      config = {
+        type:'bar',
+        data:{
+          labels,
+          datasets:[
+            {label:'Depression',data:rows.map(r=>+r.dep||0),backgroundColor:'rgba(124,77,170,.7)',borderColor:'#7c4daa',borderWidth:1.5,borderRadius:4},
+            {label:'Anxiety',data:rows.map(r=>+r.anx||0),backgroundColor:'rgba(200,75,59,.7)',borderColor:'#c84b3b',borderWidth:1.5,borderRadius:4},
+            {label:'Stress',data:rows.map(r=>+r.str||0),backgroundColor:'rgba(192,122,10,.7)',borderColor:'#c07a0a',borderWidth:1.5,borderRadius:4},
+          ]
+        },
+        options:{
+          responsive:true,maintainAspectRatio:false,
+          plugins:{legend:{labels:{font:{family:'Inter',size:12},color:'#3d3a35'}},
+            tooltip:{callbacks:{label:ctx=>`${ctx.dataset.label}: ${ctx.parsed.y}/42`}}},
+          scales:{
+            y:{max:42,title:{display:true,text:'Score (max 42)',color:'#8a8680',font:{family:'Inter',size:11}},ticks:{color:'#8a8680',font:{family:'Inter',size:11}},grid:{color:'rgba(0,0,0,.04)'}},
+            x:{ticks:{color:'#8a8680',font:{family:'Inter',size:10},maxRotation:45},grid:{display:false}}
+          }
+        }
+      };
+    } else if (type === 'disc') {
+      const discCount = {D:0,I:0,S:0,C:0};
+      rows.forEach(r=>{if(r.disc && discCount[r.disc]!==undefined) discCount[r.disc]++;});
+      const total = rows.length || 1;
+      config = {
+        type:'doughnut',
+        data:{
+          labels:['D – Driver','I – Influencer','S – Supporter','C – Analyst'],
+          datasets:[{
+            data:[discCount.D,discCount.I,discCount.S,discCount.C],
+            backgroundColor:['#c84b3b','#d4820a','#2e8b57','#2c5f9e'],
+            borderColor:['#fff','#fff','#fff','#fff'],
+            borderWidth:3,
+          }]
+        },
+        options:{
+          responsive:true,maintainAspectRatio:false,
+          cutout:'60%',
+          plugins:{
+            legend:{position:'right',labels:{font:{family:'Inter',size:12},color:'#3d3a35',padding:16,
+              generateLabels:(chart)=>chart.data.labels.map((label,i)=>({
+                text:`${label}  ${chart.data.datasets[0].data[i]} (${Math.round((chart.data.datasets[0].data[i]/total)*100)}%)`,
+                fillStyle:chart.data.datasets[0].backgroundColor[i],
+                strokeStyle:'#fff',lineWidth:2,hidden:false,index:i
+              }))}},
+            tooltip:{callbacks:{label:ctx=>`${ctx.label}: ${ctx.parsed} participants (${Math.round((ctx.parsed/total)*100)}%)`}}
+          }
+        }
+      };
+    } else if (type === 'lri') {
+      config = {
+        type:'bar',
+        data:{
+          labels,
+          datasets:[{
+            label:'Leadership Readiness %',
+            data:rows.map(r=>+r.lriPercent||0),
+            backgroundColor:rows.map(r=>{
+              const p=+r.lriPercent||0;
+              return p>=80?'rgba(46,139,87,.7)':p>=60?'rgba(212,130,10,.7)':p>=40?'rgba(44,95,158,.7)':'rgba(138,134,128,.5)';
+            }),
+            borderColor:rows.map(r=>{
+              const p=+r.lriPercent||0;
+              return p>=80?'#2e8b57':p>=60?'#d4820a':p>=40?'#2c5f9e':'#8a8680';
+            }),
+            borderWidth:1.5,borderRadius:4
+          }]
+        },
+        options:{
+          responsive:true,maintainAspectRatio:false,
+          plugins:{legend:{display:false},
+            tooltip:{callbacks:{label:ctx=>{
+              const p=ctx.parsed.y;
+              const lbl=p>=80?'High Potential Leader':p>=60?'Emerging Leader':p>=40?'Developing Potential':'Foundation Building';
+              return `${p}% – ${lbl}`;
+            }}}},
+          scales:{
+            y:{min:0,max:100,title:{display:true,text:'Leadership Readiness (%)',color:'#8a8680',font:{family:'Inter',size:11}},ticks:{color:'#8a8680',font:{family:'Inter',size:11},callback:v=>v+'%'},grid:{color:'rgba(0,0,0,.04)'}},
+            x:{ticks:{color:'#8a8680',font:{family:'Inter',size:10},maxRotation:45},grid:{display:false}}
+          }
+        }
+      };
+    } else if (type === 'all') {
+      // Radar / grouped overview for each participant
+      const dassTotals = rows.map(r=>(+r.dep||0)+(+r.anx||0)+(+r.str||0));
+      const discPcts   = rows.map(r=>{
+        const dc=r.discCounts||{D:0,I:0,S:0,C:0};
+        const primary = r.disc||'S';
+        return Math.round(((dc[primary]||0)/20)*100);
+      });
+      const lriPcts    = rows.map(r=>+r.lriPercent||0);
+      config = {
+        type:'line',
+        data:{
+          labels,
+          datasets:[
+            {label:'DASS Total (0–126)',data:dassTotals,borderColor:'#7c4daa',backgroundColor:'rgba(124,77,170,.1)',pointBackgroundColor:'#7c4daa',tension:.3,fill:true,yAxisID:'y1'},
+            {label:'DISC Primary %',data:discPcts,borderColor:'#d4820a',backgroundColor:'rgba(212,130,10,.08)',pointBackgroundColor:'#d4820a',tension:.3,fill:false,yAxisID:'y2'},
+            {label:'Leadership LRI %',data:lriPcts,borderColor:'#2e8b57',backgroundColor:'rgba(46,139,87,.08)',pointBackgroundColor:'#2e8b57',tension:.3,fill:false,yAxisID:'y2'},
+          ]
+        },
+        options:{
+          responsive:true,maintainAspectRatio:false,
+          plugins:{legend:{labels:{font:{family:'Inter',size:12},color:'#3d3a35'}}},
+          scales:{
+            y1:{type:'linear',position:'left',title:{display:true,text:'DASS Total',color:'#7c4daa',font:{family:'Inter',size:11}},ticks:{color:'#8a8680',font:{family:'Inter',size:11}},grid:{color:'rgba(0,0,0,.04)'}},
+            y2:{type:'linear',position:'right',min:0,max:100,title:{display:true,text:'% Score',color:'#8a8680',font:{family:'Inter',size:11}},ticks:{color:'#8a8680',font:{family:'Inter',size:11},callback:v=>v+'%'},grid:{display:false}},
+            x:{ticks:{color:'#8a8680',font:{family:'Inter',size:10},maxRotation:45},grid:{display:false}}
+          }
+        }
+      };
+    }
+
+    mainChart = new Chart(ctx, config);
+  }
+
+  // ── TABLE ──────────────────────────────────────
+  function renderTable(rows) {
+    const container = document.getElementById("tableContainer");
+    if (!rows.length) {
+      container.innerHTML = `<div class="state-box"><div class="state-icon">📭</div><div class="state-msg">No submissions yet.</div></div>`;
+      return;
+    }
+
+    let html = `<table class="results-table">
+      <thead><tr>
+        <th>#</th>
+        <th>Name</th>
+        <th>Dept</th>
+        <th>Role</th>
+        <th>Dep</th><th>Dep Level</th>
+        <th>Anx</th><th>Anx Level</th>
+        <th>Str</th><th>Str Level</th>
+        <th>DISC</th>
+        <th>LRI %</th><th>LRI Level</th>
+        <th>Time</th>
+      </tr></thead><tbody>`;
+
+    rows.forEach((r,i)=>{
+      const sevCls = (l)=>'badge badge-'+((l||'').toLowerCase().replace(/\s+/g,''));
+      const discCol = discColors[r.disc]||'#8a8680';
+      html += `<tr>
+        <td class="mono">${String(i+1).padStart(2,'0')}</td>
+        <td style="font-weight:500;color:var(--ink)">${r.name||'–'}</td>
+        <td>${r.dept||r.department||'–'}</td>
+        <td class="mono">${r.role||'–'}</td>
+        <td style="color:var(--dep);font-weight:600">${r.dep??'–'}</td>
+        <td><span class="${sevCls(r.depLabel)}">${r.depLabel||'–'}</span></td>
+        <td style="color:var(--anx);font-weight:600">${r.anx??'–'}</td>
+        <td><span class="${sevCls(r.anxLabel)}">${r.anxLabel||'–'}</span></td>
+        <td style="color:var(--str);font-weight:600">${r.str??'–'}</td>
+        <td><span class="${sevCls(r.strLabel)}">${r.strLabel||'–'}</span></td>
+        <td><span class="badge badge-disc-${(r.disc||'').toLowerCase()}" style="background:${discCol}20;color:${discCol};border:1px solid ${discCol}40">${r.disc||'–'}</span></td>
+        <td style="font-weight:600;color:${+r.lriPercent>=80?'#2e8b57':+r.lriPercent>=60?'#d4820a':+r.lriPercent>=40?'#2c5f9e':'#8a8680'}">${r.lriPercent??'–'}%</td>
+        <td class="mono">${(r.lriLabel||'–').split('/')[0].trim()}</td>
+        <td class="mono">${r.timestamp?new Date(r.timestamp).toLocaleString('en-MY',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'}):'–'}</td>
+      </tr>`;
+    });
+
+    html += `</tbody></table>`;
+    container.innerHTML = html;
+  }
+
+  // ── EXPORT ────────────────────────────────────
+  function exportCSV() {
+    if (!allResults.length) { alert("No data to export."); return; }
+    const keys = ['name','dept','role','years','dep','depLabel','anx','anxLabel','str','strLabel','disc','lriPercent','lriLabel','lriTotal','timestamp'];
+    const csv = [
+      keys.join(","),
+      ...allResults.map(r=>keys.map(k=>`"${(r[k]||"").toString().replace(/"/g,'""')}"`).join(","))
+    ].join("\n");
+    const a = document.createElement("a");
+    a.href = "data:text/csv;charset=utf-8,"+encodeURIComponent(csv);
+    a.download = `inokom_results_${new Date().toISOString().split("T")[0]}.csv`;
+    a.click();
+  }
+
+  // ── AUTO REFRESH ──────────────────────────────
+  function startAutoRefresh() {
+    clearInterval(timerInterval);
+    timerInterval = setInterval(()=>{if(isLoggedIn) loadResults();}, 30000);
+  }
+
+  function resetTimer() {
+    const bar = document.getElementById("timerBar");
+    bar.style.transition = "none";
+    bar.style.transform = "scaleX(0)";
+    requestAnimationFrame(()=>{
+      requestAnimationFrame(()=>{
+        bar.style.transition = "transform 30s linear";
+        bar.style.transform = "scaleX(1)";
+      });
+    });
+  }
+
+  // ── DELETE ────────────────────────────────────
+  let pendingDeleteIdx = null;
+
+  function openDeleteModal(globalIdx, name) {
+    pendingDeleteIdx = globalIdx;
+    document.getElementById('modalName').textContent = name || 'this participant';
+    document.getElementById('deleteModal').classList.add('active');
+  }
+
+  function closeModal() {
+    pendingDeleteIdx = null;
+    document.getElementById('deleteModal').classList.remove('active');
+  }
+
+  async function confirmDelete() {
+    if (pendingDeleteIdx === null) return;
+    const btn = document.querySelector('.btn-confirm-delete');
+    btn.textContent = 'Deleting…';
+    btn.disabled = true;
+
+    try {
+      allResults.splice(pendingDeleteIdx, 1);
+      await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json', 'X-Master-Key': API_KEY },
+        body: JSON.stringify({ participants: allResults })
+      });
+      closeModal();
+      updateStats();
+      populateFilter();
+      applyFilter();
+    } catch (err) {
+      alert('Failed to delete: ' + err.message);
+      btn.textContent = 'Delete';
+      btn.disabled = false;
+    }
+  }
+
+  // Close modal when clicking outside
+  document.getElementById('deleteModal').addEventListener('click', function(e) {
+    if (e.target === this) closeModal();
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Kytech Scientific Sdn Bhd - Health Check</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#f7f5f0;--white:#fff;--ink:#1a1814;--ink2:#3d3a35;--muted:#8a8680;
+  --border:#e2ded8;--border2:#ccc9c2;--gold:#b8922a;--gold2:#d4a840;--gold-bg:#faf6ee;
+  --D:#c84b3b;--D-bg:#fdf1ef;--I:#d4820a;--I-bg:#fef8f0;--S:#2e8b57;--S-bg:#f0f9f4;
+  --C:#2c5f9e;--C-bg:#eff5fc;--dep:#7c4daa;--dep-bg:#f7f2fd;--anx:#c84b3b;--anx-bg:#fdf1ef;
+  --str:#c07a0a;--str-bg:#fef8f0;--radius:12px;
+  --shadow:0 1px 3px rgba(0,0,0,.06),0 4px 16px rgba(0,0,0,.04);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--ink);font-size:15px;line-height:1.6;-webkit-text-size-adjust:100%}
+.screen{display:none}.screen.active{display:block}
+/* BILINGUAL */
+.bm{display:block;font-size:11px;color:var(--muted);font-style:italic;margin-top:1px}
+.bm-inline{font-size:11px;color:var(--muted);font-style:italic}
+.label-bm{display:block;font-size:10px;color:var(--muted);font-style:italic;font-weight:400;letter-spacing:0;text-transform:none;margin-top:1px}
+/* COVER */
+#cover{min-height:100vh;background:var(--ink);display:flex;flex-direction:column;justify-content:center;align-items:center;padding:48px 28px;text-align:center}
+.cover-logo{font-size:11px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--gold2);margin-bottom:32px}
+.cover-title{font-family:'Playfair Display',serif;font-size:clamp(32px,8vw,52px);line-height:1.1;color:#fff;margin-bottom:12px}
+.cover-title em{font-style:italic;color:var(--gold2)}
+.cover-sub{font-size:14px;color:rgba(255,255,255,.5);margin-bottom:40px;line-height:1.7;max-width:340px}
+.cover-pills{display:flex;flex-direction:column;gap:8px;margin-bottom:40px;text-align:left;width:100%;max-width:340px}
+.cover-pill{font-size:13px;color:rgba(255,255,255,.5);display:flex;align-items:flex-start;gap:8px}
+.cover-pill::before{content:'';width:5px;height:5px;border-radius:50%;background:var(--gold2);flex-shrink:0;margin-top:7px}
+.btn{border:none;border-radius:50px;padding:14px 32px;font-family:'Inter',sans-serif;font-size:14px;font-weight:500;cursor:pointer;transition:all .2s;display:inline-flex;align-items:center;gap:8px;text-decoration:none}
+.btn-primary{background:var(--gold);color:#fff;width:100%;max-width:320px;justify-content:center}
+.btn-primary:hover{background:var(--gold2)}
+.btn-outline{background:transparent;color:var(--ink);border:1.5px solid var(--border2);justify-content:center}
+/* PARTICIPANT */
+#participant-screen{min-height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:40px 20px}
+.p-card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:28px 24px;width:100%;max-width:440px;box-shadow:var(--shadow)}
+.p-top{text-align:center;margin-bottom:24px}
+.p-logo{font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--gold);margin-bottom:8px}
+.p-title{font-family:'Playfair Display',serif;font-size:22px;margin-bottom:6px}
+.p-sub{font-size:13px;color:var(--muted);line-height:1.6}
+.pfield{margin-bottom:16px}
+.pfield label{display:block;font-size:13px;font-weight:500;margin-bottom:6px}
+.pinput{width:100%;padding:10px 14px;border:1.5px solid var(--border);border-radius:8px;font-family:'Inter',sans-serif;font-size:14px;color:var(--ink);background:var(--bg);outline:none;transition:border .15s;-webkit-appearance:none}
+.pinput:focus{border-color:var(--gold)}
+.perror{display:none;font-size:13px;color:var(--D);padding:10px 14px;background:var(--D-bg);border-radius:6px;margin-bottom:12px}
+/* ASSESS HEADER */
+.assess-header{background:var(--white);border-bottom:1px solid var(--border);padding:12px 20px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:10}
+.assess-header-tag{font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;padding:4px 10px;border-radius:12px}
+.progress-wrap{display:flex;align-items:center;gap:8px}
+.progress-track{width:80px;height:3px;background:var(--border);border-radius:2px;overflow:hidden}
+.progress-fill{height:100%;border-radius:2px;transition:width .4s}
+.progress-txt{font-size:11px;color:var(--muted);white-space:nowrap}
+/* BODY */
+.assess-body{padding:24px 20px;max-width:600px;margin:0 auto}
+.q-intro{margin-bottom:24px}
+.q-intro-tag{font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+.q-intro-title{font-family:'Playfair Display',serif;font-size:22px;margin-bottom:6px}
+.q-intro-desc{font-size:13px;color:var(--muted);line-height:1.7}
+.scale-guide{display:flex;flex-wrap:wrap;gap:6px 16px;padding:12px 16px;background:var(--gold-bg);border:1px solid #e8d8b0;border-radius:8px;margin-bottom:20px}
+.scale-item{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--ink2)}
+.scale-chip{width:20px;height:20px;border-radius:4px;background:#e8e0d0;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700}
+.q-card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:18px;margin-bottom:10px;box-shadow:var(--shadow);transition:border-color .2s}
+.q-card.answered{border-color:#b8d4a0}
+.q-meta{font-size:11px;color:var(--muted);margin-bottom:6px;display:flex;justify-content:space-between;align-items:center}
+.q-subscale{font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;padding:2px 8px;border-radius:10px}
+.q-text{font-size:14px;line-height:1.6;color:var(--ink);margin-bottom:14px}
+.options-row{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.opt-btn{border:1.5px solid var(--border);background:var(--bg);border-radius:8px;padding:10px 4px;text-align:center;cursor:pointer;transition:all .15s;display:flex;flex-direction:column;align-items:center;gap:3px;-webkit-tap-highlight-color:transparent}
+.opt-btn:active{transform:scale(.97)}
+.opt-btn.active{border-color:var(--gold);background:var(--gold-bg)}
+.opt-num{font-size:16px;font-weight:600;color:var(--gold)}
+.opt-label{font-size:9px;color:var(--muted);line-height:1.2;text-align:center}
+.lead-options{display:flex;flex-direction:column;gap:8px}
+.lead-opt{border:1.5px solid var(--border);background:var(--bg);border-radius:10px;padding:12px 14px;cursor:pointer;transition:all .15s;display:flex;align-items:flex-start;gap:10px;-webkit-tap-highlight-color:transparent}
+.lead-opt:active{transform:scale(.99)}
+.lead-opt.active{border-color:var(--gold);background:var(--gold-bg)}
+.lead-dot{width:12px;height:12px;border-radius:50%;flex-shrink:0;margin-top:3px}
+.lead-opt-text{font-size:13px;line-height:1.5}
+.lri-num{width:22px;height:22px;border-radius:50%;background:var(--gold-bg);border:1.5px solid var(--gold);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:var(--gold);flex-shrink:0;margin-top:1px}
+/* FOOTER */
+.assess-footer{background:var(--white);border-top:1px solid var(--border);padding:14px 20px;position:sticky;bottom:0;display:flex;justify-content:space-between;align-items:center;gap:12px}
+.answered-count{font-size:12px;color:var(--muted)}
+/* TRANSITION */
+.transition-screen{min-height:100vh;background:var(--ink);display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:48px 24px}
+.trans-check{width:64px;height:64px;border-radius:50%;background:rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;margin:0 auto 24px;font-size:28px;color:var(--gold2)}
+.trans-title{font-family:'Playfair Display',serif;font-size:28px;color:#fff;margin-bottom:10px}
+.trans-sub{font-size:14px;color:rgba(255,255,255,.5);max-width:340px;line-height:1.8;margin-bottom:32px}
+.trans-pills{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-bottom:32px}
+.trans-pill{border:1px solid rgba(255,255,255,.15);border-radius:20px;padding:6px 14px;font-size:12px;color:rgba(255,255,255,.55);text-align:center}
+/* RESULTS */
+#results-screen{background:var(--bg);min-height:100vh}
+.results-header{background:var(--ink);padding:32px 24px;color:#fff}
+.results-logo{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--gold2);margin-bottom:14px}
+.results-title{font-family:'Playfair Display',serif;font-size:26px;margin-bottom:6px;font-weight:400}
+.results-sub{font-size:13px;color:rgba(255,255,255,.5);margin-bottom:8px}
+.results-participant{font-size:13px;color:rgba(255,255,255,.7);margin-top:6px}
+.results-body{padding:28px 20px;max-width:680px;margin:0 auto}
+.section-divider{display:flex;align-items:center;gap:12px;margin:28px 0 16px}
+.section-divider-line{flex:1;height:1px;background:var(--border)}
+.section-divider-label{font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);white-space:nowrap}
+.dass-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px}
+.dass-card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:16px;text-align:center;box-shadow:var(--shadow)}
+.dass-card-label{font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px}
+.dass-card-score{font-size:36px;font-weight:300;line-height:1;margin-bottom:6px}
+.severity-badge{display:inline-block;font-size:10px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;padding:3px 10px;border-radius:12px}
+.dass-bar-row{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.dass-bar-label{font-size:12px;min-width:90px;color:var(--ink2)}
+.dass-bar-track{flex:1;height:6px;background:var(--border);border-radius:3px;overflow:hidden}
+.dass-bar-fill{height:100%;border-radius:3px;transition:width 1.2s cubic-bezier(.4,0,.2,1);width:0}
+.dass-bar-val{font-size:12px;font-weight:500;min-width:28px;text-align:right}
+.interp-box{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:20px;box-shadow:var(--shadow);margin-bottom:12px}
+.interp-header{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.interp-icon{font-size:20px}
+.interp-title{font-size:15px;font-weight:500}
+.interp-level{font-size:12px;color:var(--muted)}
+.interp-text{font-size:13px;color:var(--ink2);line-height:1.8}
+.interp-tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:12px}
+.interp-tag{font-size:11px;padding:3px 10px;border-radius:12px;background:var(--bg);border:1px solid var(--border);color:var(--ink2)}
+.disc-result{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:22px;box-shadow:var(--shadow);margin-bottom:12px}
+.disc-top{display:flex;align-items:flex-start;gap:14px;margin-bottom:20px}
+.disc-badge-large{width:60px;height:60px;border-radius:12px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:700;color:#fff}
+.disc-name{font-family:'Playfair Display',serif;font-size:19px;margin-bottom:3px}
+.disc-tagline{font-size:13px;color:var(--muted);line-height:1.5}
+.disc-bar-cols{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.disc-col{text-align:center}
+.disc-col-track{height:60px;background:var(--bg);border:1px solid var(--border);border-radius:5px;overflow:hidden;display:flex;flex-direction:column;justify-content:flex-end;margin-bottom:6px}
+.disc-col-fill{border-radius:4px 4px 0 0;transition:height 1.2s cubic-bezier(.4,0,.2,1);height:0}
+.disc-col-label{font-size:12px;font-weight:700}
+.disc-col-val{font-size:11px;color:var(--muted)}
+.strength-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px}
+.strength-item{background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:10px 12px}
+.strength-label{font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:5px}
+.strength-text{font-size:12px;color:var(--ink2);line-height:1.6}
+.potential-card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:22px;box-shadow:var(--shadow)}
+.potential-score-row{display:flex;align-items:center;gap:20px;margin-bottom:20px}
+.potential-gauge{width:90px;height:90px;flex-shrink:0}
+.potential-gauge svg{width:100%;height:100%}
+.potential-score-num{font-family:'Playfair Display',serif;font-size:36px;line-height:1;margin-bottom:3px}
+.potential-verdict{font-size:16px;font-weight:500;margin-bottom:3px}
+.potential-sub{font-size:12px;color:var(--muted);line-height:1.5}
+.dimension-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px}
+.dim-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:5px}
+.dim-name{font-size:12px;font-weight:500}
+.dim-score{font-size:11px;color:var(--muted)}
+.dim-track{height:4px;background:var(--border);border-radius:2px;overflow:hidden}
+.dim-fill{height:100%;border-radius:2px;transition:width 1.2s cubic-bezier(.4,0,.2,1);width:0}
+.rec-box{background:linear-gradient(135deg,#1a1814 0%,#2d2820 100%);border-radius:var(--radius);padding:22px;color:#fff;margin-top:12px}
+.rec-title{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--gold2);margin-bottom:6px;font-weight:600}
+.rec-text{font-size:13px;color:rgba(255,255,255,.7);line-height:1.8}
+.rec-tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:12px}
+.rec-tag{font-size:11px;padding:4px 12px;border-radius:20px;border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.6)}
+/* SUBMIT BANNER */
+.submit-banner{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:18px;margin-top:16px;box-shadow:var(--shadow);text-align:center}
+.submit-banner.success{background:#f0f9f4;border-color:#b8d4a0}
+.submit-banner.error{background:var(--D-bg);border-color:var(--D)}
+.submit-icon{font-size:28px;margin-bottom:8px}
+.submit-msg{font-size:14px;font-weight:500;margin-bottom:4px}
+.submit-sub{font-size:12px;color:var(--muted)}
+.restart-btn{display:flex;justify-content:center;margin:24px 0}
+/* Loading spinner */
+#loading-screen{min-height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;background:var(--bg)}
+.spinner{width:36px;height:36px;border:2px solid var(--border);border-top-color:var(--gold);border-radius:50%;animation:spin .8s linear infinite;margin-bottom:16px}
+@keyframes spin{to{transform:rotate(360deg)}}
+.fade-in{animation:fadeIn .3s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+@media(max-width:380px){
+  .options-row{grid-template-columns:repeat(2,1fr)}
+  .dass-grid{grid-template-columns:1fr}
+  .strength-grid,.dimension-grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<!-- ═══ CONFIG - ADMIN SETS THIS ═══ -->
+<script>
+// !! ADMIN: Paste your JSONBin BIN ID and API KEY here after setup !!
+const JSONBIN_BIN_ID = '69ea2206aaba8821972d0cfd';
+const JSONBIN_API_KEY = '$2a$10$DvOUZASCiyYzftTBY7a.Mu5yK3t7KCdWPO7qem9dCPbXnGzd9xnl2';
+const SESSION_CODE = 'INOKOM2025'; // Change this each session
+</script>
+
+<!-- COVER -->
+<div id="cover" class="screen active">
+  <div class="cover-logo">Kytech Scientific Sdn Bhd</div>
+  <h1 class="cover-title">Organisational<br><em>Health Check</em></h1>
+  <p class="cover-sub">A two-part assessment to understand your wellbeing and identify your leadership potential.</p>
+  <div class="cover-pills">
+    <div class="cover-pill">Conducted by Certified Psychologist and Training Consultant</div>
+    <div class="cover-pill">Fully confidential - individual results stay private</div>
+    <div class="cover-pill">Takes about 15 minutes to complete</div>
+    <div class="cover-pill">HRD Corp Claimable Programme</div>
+  </div>
+  <button class="btn btn-primary" onclick="showScreen('participant-screen')">Begin Assessment</button>
+</div>
+
+<!-- PARTICIPANT INFO -->
+<div id="participant-screen" class="screen">
+  <div class="p-card">
+    <div class="p-top">
+      <div class="p-logo">Kytech Scientific Sdn Bhd</div>
+      <h2 class="p-title">Before we begin</h2>
+      <p class="p-sub">Please enter your details. These are confidential and used only for the group gap analysis report.</p>
+    </div>
+    <div class="pfield">
+      <label>Full Name <span style="color:var(--D)">*</span></label>
+      <input class="pinput" id="p-name" type="text" placeholder="e.g. Ahmad bin Ismail">
+    </div>
+    <div class="pfield">
+      <label>Department <span style="color:var(--D)">*</span></label>
+      <input class="pinput" id="p-dept" type="text" placeholder="e.g. Production, Quality, HR">
+    </div>
+    <div class="pfield">
+      <label>Role / Job Title</label>
+      <input class="pinput" id="p-role" type="text" placeholder="e.g. Line Leader, Supervisor, Operator">
+    </div>
+    <div class="pfield">
+      <label>Years with Inokom</label>
+      <select class="pinput" id="p-years">
+        <option value="">Select tenure</option>
+        <option>Less than 1 year</option>
+        <option>1 to 3 years</option>
+        <option>3 to 5 years</option>
+        <option>5 to 10 years</option>
+        <option>More than 10 years</option>
+      </select>
+    </div>
+    <div class="perror" id="p-error">Please enter your name and department to continue.</div>
+    <button class="btn btn-primary" onclick="submitParticipant()">Continue to Assessment</button>
+  </div>
+</div>
+
+<!-- DASS-21 -->
+<div id="dass-screen" class="screen">
+  <div class="assess-header">
+    <div class="assess-header-tag" style="background:var(--dep-bg);color:var(--dep)">Part 1: Wellbeing / <span style="font-style:italic">Bahagian 1: Kesejahteraan</span></div>
+    <div class="progress-wrap">
+      <div class="progress-track"><div class="progress-fill" id="dass-progress" style="background:var(--dep)"></div></div>
+      <div class="progress-txt" id="dass-counter">0/21</div>
+    </div>
+  </div>
+  <div class="assess-body">
+    <div class="q-intro">
+      <div class="q-intro-tag">Part 1 of 2 / Bahagian 1 daripada 2</div>
+      <div class="q-intro-title">How have you been feeling?<span class="bm" style="font-size:16px;font-family:'Inter',sans-serif;font-weight:300;color:var(--muted)">Bagaimana perasaan anda?</span></div>
+      <div class="q-intro-desc">Please read each statement and select how much it applied to you over the past week. There are no right or wrong answers.<br><span class="bm-inline">Sila baca setiap pernyataan dan pilih sejauh mana ia berkaitan dengan anda sepanjang minggu lepas. Tiada jawapan betul atau salah.</span></div>
+    </div>
+    <div class="scale-guide">
+      <div class="scale-item"><div class="scale-chip" style="background:#f0ede8">0</div>Not at all / <em>Langsung tidak</em></div>
+      <div class="scale-item"><div class="scale-chip" style="background:#e0d8c8">1</div>Sometimes / <em>Kadang-kadang</em></div>
+      <div class="scale-item"><div class="scale-chip" style="background:#d0c8b0">2</div>Often / <em>Kerap</em></div>
+      <div class="scale-item"><div class="scale-chip" style="background:#c0b898">3</div>Most of the time / <em>Kebanyakan masa</em></div>
+    </div>
+    <div id="dass-questions"></div>
+  </div>
+  <div class="assess-footer">
+    <div class="answered-count" id="dass-answered">0 of 21 answered / 0 daripada 21 dijawab</div>
+    <button class="btn btn-primary" onclick="submitDASS()" style="padding:11px 22px;font-size:13px">Next: Leadership / <span style="font-style:italic">Seterusnya: Kepimpinan</span></button>
+  </div>
+</div>
+
+<!-- TRANSITION -->
+<div id="transition-screen" class="screen">
+  <div class="transition-screen">
+    <div class="trans-check">✓</div>
+    <h2 class="trans-title">Part 1 Complete<span class="bm" style="font-size:18px;font-family:'Inter',sans-serif;font-weight:300;color:rgba(255,255,255,.5)">Bahagian 1 Selesai</span></h2>
+    <p class="trans-sub">Thank you. Now for Part 2 - this section helps identify your natural strengths and leadership potential.<br><span class="bm-inline" style="color:rgba(255,255,255,.35)">Terima kasih. Kini untuk Bahagian 2 – bahagian ini membantu mengenal pasti kekuatan semula jadi dan potensi kepimpinan anda.</span></p>
+    <div class="trans-pills">
+      <div class="trans-pill">28 questions / 28 soalan</div>
+      <div class="trans-pill">8 to 10 minutes / 8 hingga 10 minit</div>
+      <div class="trans-pill">No right or wrong answers / Tiada jawapan betul atau salah</div>
+    </div>
+    <button class="btn btn-primary" onclick="startPart(2)">Begin Part 2 / <span style="font-style:italic">Mula Bahagian 2</span></button>
+  </div>
+</div>
+
+<!-- LEADERSHIP -->
+<div id="lead-screen" class="screen">
+  <div class="assess-header">
+    <div class="assess-header-tag" style="background:var(--gold-bg);color:var(--gold)">Part 2: Leadership / <span style="font-style:italic">Bahagian 2: Kepimpinan</span></div>
+    <div class="progress-wrap">
+      <div class="progress-track"><div class="progress-fill" id="lead-progress" style="background:var(--gold)"></div></div>
+      <div class="progress-txt" id="lead-counter">0/28</div>
+    </div>
+  </div>
+  <div class="assess-body">
+    <div class="q-intro">
+      <div class="q-intro-tag">Part 2 of 2 / Bahagian 2 daripada 2</div>
+      <div class="q-intro-title">How do you naturally behave at work?<span class="bm" style="font-size:16px;font-family:'Inter',sans-serif;font-weight:300;color:var(--muted)">Bagaimana tingkah laku semula jadi anda di tempat kerja?</span></div>
+      <div class="q-intro-desc">Choose the option that best describes what you naturally tend to do, not what you think you should do.<br><span class="bm-inline">Pilih pilihan yang paling menggambarkan apa yang anda lazimnya lakukan secara semula jadi, bukan apa yang anda fikir patut anda lakukan.</span></div>
+    </div>
+    <div id="lead-questions"></div>
+  </div>
+  <div class="assess-footer">
+    <div class="answered-count" id="lead-answered">0 of 28 answered / 0 daripada 28 dijawab</div>
+    <button class="btn btn-primary" onclick="submitLead()" style="padding:11px 22px;font-size:13px">View My Results / <span style="font-style:italic">Lihat Keputusan Saya</span></button>
+  </div>
+</div>
+
+
+
+<!-- RESULTS -->
+<div id="results-screen" class="screen">
+  <div class="results-header">
+    <div class="results-logo">Kytech Scientific Sdn Bhd · Personal Report / Laporan Peribadi</div>
+    <h2 class="results-title">Your Health Check Report<span class="bm" style="font-size:17px;font-family:'Inter',sans-serif;font-weight:300;color:rgba(255,255,255,.5)">Laporan Pemeriksaan Kesihatan Anda</span></h2>
+    <div class="results-sub">Confidential / Sulit · Inokom Sdn Bhd · <span id="result-date"></span></div>
+    <div class="results-participant" id="results-participant"></div>
+  </div>
+  <div class="results-body" id="results-body-inner">
+    <div style="text-align:center;padding:60px 20px">
+      <div class="spinner" style="margin:0 auto 16px"></div>
+      <p style="font-size:14px;color:var(--muted)">Preparing your report... / <em>Menyediakan laporan anda...</em></p>
+    </div>
+  </div>
+</div>
+
+<script>
+// ══════════════════════════════════════════════
+// DATA
+// ══════════════════════════════════════════════
+const DASS_QUESTIONS = [
+  { id:1,  text:"I found it hard to wind down.<br><small style='color:var(--muted);font-style:italic'>Saya sukar untuk berehat dan tenangkan diri.</small>", subscale:"S", sub:"Stress / Tekanan" },
+  { id:2,  text:"I was aware of dryness of my mouth.<br><small style='color:var(--muted);font-style:italic'>Saya sedar mulut saya menjadi kering.</small>", subscale:"A", sub:"Anxiety / Kebimbangan" },
+  { id:3,  text:"I couldn't seem to experience any positive feeling at all.<br><small style='color:var(--muted);font-style:italic'>Saya langsung tidak dapat merasai sebarang perasaan positif.</small>", subscale:"D", sub:"Depression / Kemurungan" },
+  { id:4,  text:"I experienced breathing difficulty (e.g., breathlessness without physical exertion).<br><small style='color:var(--muted);font-style:italic'>Saya mengalami kesukaran bernafas (cth. sesak nafas tanpa aktiviti fizikal).</small>", subscale:"A", sub:"Anxiety / Kebimbangan" },
+  { id:5,  text:"I found it difficult to work up the initiative to do things.<br><small style='color:var(--muted);font-style:italic'>Saya sukar untuk memulakan sesuatu perkara.</small>", subscale:"D", sub:"Depression / Kemurungan" },
+  { id:6,  text:"I tended to over-react to situations.<br><small style='color:var(--muted);font-style:italic'>Saya cenderung bertindak balas secara berlebihan terhadap situasi.</small>", subscale:"S", sub:"Stress / Tekanan" },
+  { id:7,  text:"I experienced trembling (e.g., in the hands).<br><small style='color:var(--muted);font-style:italic'>Saya mengalami gegaran (cth. pada tangan).</small>", subscale:"A", sub:"Anxiety / Kebimbangan" },
+  { id:8,  text:"I felt that I was using a lot of nervous energy.<br><small style='color:var(--muted);font-style:italic'>Saya rasa seperti menggunakan banyak tenaga yang tertekan.</small>", subscale:"S", sub:"Stress / Tekanan" },
+  { id:9,  text:"I was worried about situations in which I might panic and make a fool of myself.<br><small style='color:var(--muted);font-style:italic'>Saya bimbang tentang situasi di mana saya mungkin panik dan memalukan diri sendiri.</small>", subscale:"A", sub:"Anxiety / Kebimbangan" },
+  { id:10, text:"I felt that I had nothing to look forward to.<br><small style='color:var(--muted);font-style:italic'>Saya rasa tiada apa yang perlu dinantikan.</small>", subscale:"D", sub:"Depression / Kemurungan" },
+  { id:11, text:"I found myself getting agitated.<br><small style='color:var(--muted);font-style:italic'>Saya mendapati diri saya menjadi gelisah.</small>", subscale:"S", sub:"Stress / Tekanan" },
+  { id:12, text:"I found it difficult to relax.<br><small style='color:var(--muted);font-style:italic'>Saya sukar untuk berasa tenang.</small>", subscale:"S", sub:"Stress / Tekanan" },
+  { id:13, text:"I felt down-hearted and blue.<br><small style='color:var(--muted);font-style:italic'>Saya berasa kecewa dan sedih.</small>", subscale:"D", sub:"Depression / Kemurungan" },
+  { id:14, text:"I was intolerant of anything that kept me from getting on with what I was doing.<br><small style='color:var(--muted);font-style:italic'>Saya tidak sabar dengan apa-apa yang menghalang saya daripada meneruskan kerja.</small>", subscale:"S", sub:"Stress / Tekanan" },
+  { id:15, text:"I felt I was close to panic.<br><small style='color:var(--muted);font-style:italic'>Saya rasa hampir panik.</small>", subscale:"A", sub:"Anxiety / Kebimbangan" },
+  { id:16, text:"I was unable to become enthusiastic about anything.<br><small style='color:var(--muted);font-style:italic'>Saya tidak mampu untuk berasa bersemangat tentang apa-apa pun.</small>", subscale:"D", sub:"Depression / Kemurungan" },
+  { id:17, text:"I felt I wasn't worth much as a person.<br><small style='color:var(--muted);font-style:italic'>Saya rasa diri saya tidak bernilai sebagai seorang insan.</small>", subscale:"D", sub:"Depression / Kemurungan" },
+  { id:18, text:"I felt that I was rather touchy.<br><small style='color:var(--muted);font-style:italic'>Saya rasa diri saya agak sensitif dan mudah tersinggung.</small>", subscale:"S", sub:"Stress / Tekanan" },
+  { id:19, text:"I was aware of the action of my heart without physical exertion (e.g., heart racing).<br><small style='color:var(--muted);font-style:italic'>Saya sedar tindakan jantung saya tanpa aktiviti fizikal (cth. jantung berdegup kencang).</small>", subscale:"A", sub:"Anxiety / Kebimbangan" },
+  { id:20, text:"I felt scared without any good reason.<br><small style='color:var(--muted);font-style:italic'>Saya berasa takut tanpa sebab yang jelas.</small>", subscale:"A", sub:"Anxiety / Kebimbangan" },
+  { id:21, text:"I felt that life was meaningless.<br><small style='color:var(--muted);font-style:italic'>Saya rasa kehidupan ini tidak bermakna.</small>", subscale:"D", sub:"Depression / Kemurungan" },
+];
+const DASS_THRESHOLDS = {
+  D:[{max:9,label:"Normal",color:"#2e8b57",bg:"#f0f9f4"},{max:13,label:"Mild",color:"#d4820a",bg:"#fef8f0"},{max:20,label:"Moderate",color:"#e05a4b",bg:"#fdf1ef"},{max:27,label:"Severe",color:"#c0392b",bg:"#fdf1ef"},{max:99,label:"Extremely Severe",color:"#8e1010",bg:"#fdf1ef"}],
+  A:[{max:7,label:"Normal",color:"#2e8b57",bg:"#f0f9f4"},{max:9,label:"Mild",color:"#d4820a",bg:"#fef8f0"},{max:14,label:"Moderate",color:"#e05a4b",bg:"#fdf1ef"},{max:19,label:"Severe",color:"#c0392b",bg:"#fdf1ef"},{max:99,label:"Extremely Severe",color:"#8e1010",bg:"#fdf1ef"}],
+  S:[{max:14,label:"Normal",color:"#2e8b57",bg:"#f0f9f4"},{max:18,label:"Mild",color:"#d4820a",bg:"#fef8f0"},{max:25,label:"Moderate",color:"#e05a4b",bg:"#fdf1ef"},{max:33,label:"Severe",color:"#c0392b",bg:"#fdf1ef"},{max:99,label:"Extremely Severe",color:"#8e1010",bg:"#fdf1ef"}],
+};
+const LEAD_QUESTIONS = [
+  {id:1,type:"disc",text:"Your team faces an unexpected problem mid-shift. What do you do first?<br><small style='color:var(--muted);font-style:italic'>Pasukan anda menghadapi masalah yang tidak dijangka di pertengahan syif. Apa yang anda lakukan dahulu?</small>",options:[{letter:"D",text:"Take charge immediately - assign tasks and push to fix it fast.<br><small style='color:var(--muted);font-style:italic'>Ambil alih segera – tugaskan kerja dan desak untuk selesaikannya dengan cepat.</small>"},{letter:"I",text:"Rally the team, keep the mood positive, and brainstorm together.<br><small style='color:var(--muted);font-style:italic'>Himpunkan pasukan, kekalkan suasana positif, dan bincang bersama-sama.</small>"},{letter:"S",text:"Stay calm, follow the established procedure, and avoid disruption.<br><small style='color:var(--muted);font-style:italic'>Kekal tenang, ikut prosedur yang ditetapkan, dan elakkan gangguan.</small>"},{letter:"C",text:"Investigate the root cause thoroughly before acting.<br><small style='color:var(--muted);font-style:italic'>Siasat punca akar umbi dengan teliti sebelum bertindak.</small>"}]},
+  {id:2,type:"disc",text:"A new work procedure is introduced that changes how you do your daily tasks. Your reaction:<br><small style='color:var(--muted);font-style:italic'>Prosedur kerja baharu diperkenalkan yang mengubah cara anda melakukan tugas harian. Reaksi anda:</small>",options:[{letter:"D",text:"I challenge whether it's truly better, then push for quick implementation if it is.<br><small style='color:var(--muted);font-style:italic'>Saya pertikaikan sama ada ia lebih baik, kemudian desak pelaksanaan pantas jika ya.</small>"},{letter:"I",text:"I get excited about the change and try to get others on board.<br><small style='color:var(--muted);font-style:italic'>Saya teruja dengan perubahan itu dan cuba dapatkan sokongan orang lain.</small>"},{letter:"S",text:"I prefer time to understand it fully before switching over.<br><small style='color:var(--muted);font-style:italic'>Saya lebih suka masa untuk memahaminya sepenuhnya sebelum bertukar.</small>"},{letter:"C",text:"I review the new procedure in detail to ensure I understand it correctly.<br><small style='color:var(--muted);font-style:italic'>Saya semak prosedur baharu secara terperinci untuk memastikan saya faham dengan betul.</small>"}]},
+  {id:3,type:"disc",text:"When your supervisor gives you a task without a detailed explanation, you:<br><small style='color:var(--muted);font-style:italic'>Apabila penyelia anda memberi tugas tanpa penjelasan terperinci, anda:</small>",options:[{letter:"D",text:"Get started right away - I'll figure it out as I go.<br><small style='color:var(--muted);font-style:italic'>Terus mulakan – saya akan fikirkan semasa melaksanakannya.</small>"},{letter:"I",text:"Talk to teammates to gather ideas and then jump in enthusiastically.<br><small style='color:var(--muted);font-style:italic'>Berbincang dengan rakan sepasukan untuk kumpul idea kemudian mulakan dengan bersemangat.</small>"},{letter:"S",text:"Ask for clarification before I begin so I don't make mistakes.<br><small style='color:var(--muted);font-style:italic'>Minta penjelasan sebelum memulakan supaya tidak membuat kesilapan.</small>"},{letter:"C",text:"Ask for the full details, steps, and expected quality standard.<br><small style='color:var(--muted);font-style:italic'>Minta maklumat penuh, langkah-langkah, dan standard kualiti yang dijangkakan.</small>"}]},
+  {id:4,type:"disc",text:"There is a quality defect or error found in your work area. Your first instinct:<br><small style='color:var(--muted);font-style:italic'>Terdapat kecacatan kualiti atau kesilapan yang ditemui di kawasan kerja anda. Naluri pertama anda:</small>",options:[{letter:"D",text:"Fix it immediately and let the responsible person know directly.<br><small style='color:var(--muted);font-style:italic'>Betulkan segera dan maklumkan terus kepada orang yang bertanggungjawab.</small>"},{letter:"I",text:"Bring it up with the team so everyone is aware and learns from it.<br><small style='color:var(--muted);font-style:italic'>Bangkitkan dengan pasukan supaya semua sedar dan belajar daripadanya.</small>"},{letter:"S",text:"Follow the standard reporting procedure without causing alarm.<br><small style='color:var(--muted);font-style:italic'>Ikut prosedur laporan standard tanpa menimbulkan kebimbangan.</small>"},{letter:"C",text:"Document it carefully and trace it back to the exact cause.<br><small style='color:var(--muted);font-style:italic'>Dokumentasikan dengan teliti dan kesan semula punca yang tepat.</small>"}]},
+  {id:5,type:"disc",text:"You are asked to train a new colleague on your job. You approach this by:<br><small style='color:var(--muted);font-style:italic'>Anda diminta melatih rakan sekerja baharu mengenai kerja anda. Anda mendekatinya dengan:</small>",options:[{letter:"D",text:"Show them once, set a clear target, and let them try it themselves.<br><small style='color:var(--muted);font-style:italic'>Tunjukkan sekali, tetapkan sasaran yang jelas, dan biarkan mereka mencubanya sendiri.</small>"},{letter:"I",text:"Make it engaging - I enjoy explaining, encouraging, and building their confidence.<br><small style='color:var(--muted);font-style:italic'>Jadikannya menarik – saya suka menerangkan, menggalakkan dan membina keyakinan mereka.</small>"},{letter:"S",text:"Walk them through step by step patiently until they are comfortable.<br><small style='color:var(--muted);font-style:italic'>Pandukan mereka langkah demi langkah dengan sabar sehingga mereka selesa.</small>"},{letter:"C",text:"Ensure they understand every detail, standard, and the reason behind each step.<br><small style='color:var(--muted);font-style:italic'>Pastikan mereka memahami setiap butiran, standard, dan sebab di sebalik setiap langkah.</small>"}]},
+  {id:6,type:"disc",text:"Your team is running behind the daily target. How do you respond?<br><small style='color:var(--muted);font-style:italic'>Pasukan anda ketinggalan daripada sasaran harian. Bagaimana anda bertindak balas?</small>",options:[{letter:"D",text:"Push harder - I take the lead and drive the team to close the gap.<br><small style='color:var(--muted);font-style:italic'>Tekan lebih kuat – saya mengambil tindakan dan memacu pasukan untuk tutup jurang.</small>"},{letter:"I",text:"Encourage the team, remind them we can do it, and keep energy high.<br><small style='color:var(--muted);font-style:italic'>Galakkan pasukan, ingatkan mereka bahawa kita boleh buat, dan kekalkan semangat tinggi.</small>"},{letter:"S",text:"Stay steady, work at a consistent pace, and support whoever needs help.<br><small style='color:var(--muted);font-style:italic'>Kekal stabil, bekerja pada kadar yang konsisten, dan sokong sesiapa yang perlukan bantuan.</small>"},{letter:"C",text:"Identify where the bottleneck is so we can fix the process, not just rush.<br><small style='color:var(--muted);font-style:italic'>Kenal pasti di mana kesesakan berlaku supaya kita boleh perbaiki prosesnya, bukan sekadar bergegas.</small>"}]},
+  {id:7,type:"disc",text:"A colleague makes a mistake that affects your work. You:<br><small style='color:var(--muted);font-style:italic'>Seorang rakan sekerja membuat kesilapan yang memberi kesan kepada kerja anda. Anda:</small>",options:[{letter:"D",text:"Speak to them directly and clearly - I point out the issue right away.<br><small style='color:var(--muted);font-style:italic'>Bercakap terus dan jelas – saya tunjukkan masalah itu segera.</small>"},{letter:"I",text:"Approach them in a friendly way and work through it together.<br><small style='color:var(--muted);font-style:italic'>Dekati mereka dengan cara mesra dan selesaikannya bersama-sama.</small>"},{letter:"S",text:"Stay calm and avoid confrontation - I find a quiet way to resolve it.<br><small style='color:var(--muted);font-style:italic'>Kekal tenang dan elak konfrontasi – saya cari cara yang pendiam untuk selesaikannya.</small>"},{letter:"C",text:"Check the facts first, then raise it with specific evidence.<br><small style='color:var(--muted);font-style:italic'>Semak fakta dahulu, kemudian bangkitkannya dengan bukti yang spesifik.</small>"}]},
+  {id:8,type:"disc",text:"In a team meeting, you are most likely to:<br><small style='color:var(--muted);font-style:italic'>Dalam mesyuarat pasukan, anda paling cenderung untuk:</small>",options:[{letter:"D",text:"Drive the agenda and push for decisions to be made.<br><small style='color:var(--muted);font-style:italic'>Pacu agenda dan desak supaya keputusan dibuat.</small>"},{letter:"I",text:"Keep the energy high and make sure everyone contributes.<br><small style='color:var(--muted);font-style:italic'>Kekalkan semangat tinggi dan pastikan semua orang menyumbang.</small>"},{letter:"S",text:"Listen carefully and only speak when I'm sure of what I want to say.<br><small style='color:var(--muted);font-style:italic'>Mendengar dengan teliti dan hanya bercakap apabila saya pasti apa yang ingin disampaikan.</small>"},{letter:"C",text:"Take notes and ask detailed questions to ensure clarity.<br><small style='color:var(--muted);font-style:italic'>Ambil nota dan tanya soalan terperinci untuk memastikan kejelasan.</small>"}]},
+  {id:9,type:"disc",text:"When your supervisor asks for feedback on a new work process, you:<br><small style='color:var(--muted);font-style:italic'>Apabila penyelia anda meminta maklum balas mengenai proses kerja baharu, anda:</small>",options:[{letter:"D",text:"Give a direct and honest opinion - I say what needs improving, clearly.<br><small style='color:var(--muted);font-style:italic'>Berikan pendapat yang terus dan jujur – saya katakan apa yang perlu diperbaiki dengan jelas.</small>"},{letter:"I",text:"Share my view positively and suggest improvements enthusiastically.<br><small style='color:var(--muted);font-style:italic'>Kongsikan pandangan secara positif dan cadangkan penambahbaikan dengan bersemangat.</small>"},{letter:"S",text:"Give gentle feedback - I don't want to create conflict or upset anyone.<br><small style='color:var(--muted);font-style:italic'>Berikan maklum balas yang lembut – saya tidak mahu mewujudkan konflik atau mengecewakan sesiapa.</small>"},{letter:"C",text:"Present my analysis with specific observations to back it up.<br><small style='color:var(--muted);font-style:italic'>Bentangkan analisis saya dengan pemerhatian spesifik untuk menyokongnya.</small>"}]},
+  {id:10,type:"disc",text:"When two teammates disagree and come to you, you tend to:<br><small style='color:var(--muted);font-style:italic'>Apabila dua ahli pasukan berselisih pendapat dan datang kepada anda, anda cenderung untuk:</small>",options:[{letter:"D",text:"Make a quick call and tell them which approach makes more sense.<br><small style='color:var(--muted);font-style:italic'>Buat keputusan pantas dan beritahu mereka pendekatan mana yang lebih masuk akal.</small>"},{letter:"I",text:"Help both sides feel heard and guide them toward agreement.<br><small style='color:var(--muted);font-style:italic'>Bantu kedua-dua pihak berasa didengar dan pandu mereka ke arah persetujuan.</small>"},{letter:"S",text:"Stay neutral, avoid taking sides, and restore harmony.<br><small style='color:var(--muted);font-style:italic'>Kekal neutral, elak memihak kepada mana-mana pihak, dan pulihkan keharmonian.</small>"},{letter:"C",text:"Listen to both sides then help them weigh the facts objectively.<br><small style='color:var(--muted);font-style:italic'>Dengar kedua-dua pihak kemudian bantu mereka menilai fakta secara objektif.</small>"}]},
+  {id:11,type:"disc",text:"Describe how you prefer to work day-to-day:<br><small style='color:var(--muted);font-style:italic'>Huraikan cara anda lebih suka bekerja sehari-hari:</small>",options:[{letter:"D",text:"Fast-paced with clear targets - I thrive under pressure.<br><small style='color:var(--muted);font-style:italic'>Kadar pantas dengan sasaran jelas – saya berkembang di bawah tekanan.</small>"},{letter:"I",text:"Varied tasks with lots of interaction with people.<br><small style='color:var(--muted);font-style:italic'>Tugas pelbagai dengan banyak interaksi bersama orang ramai.</small>"},{letter:"S",text:"A steady, predictable routine where I know what is expected.<br><small style='color:var(--muted);font-style:italic'>Rutin yang stabil dan boleh diramal di mana saya tahu apa yang diharapkan.</small>"},{letter:"C",text:"A structured environment with clear standards and quality checks.<br><small style='color:var(--muted);font-style:italic'>Persekitaran berstruktur dengan standard yang jelas dan semakan kualiti.</small>"}]},
+  {id:12,type:"disc",text:"At the end of a long and tough shift or workday, you feel most satisfied when:<br><small style='color:var(--muted);font-style:italic'>Pada akhir syif atau hari kerja yang panjang dan berat, anda paling puas apabila:</small>",options:[{letter:"D",text:"I hit or exceeded the target.<br><small style='color:var(--muted);font-style:italic'>Saya mencapai atau melepasi sasaran.</small>"},{letter:"I",text:"The team had a good experience and morale was high.<br><small style='color:var(--muted);font-style:italic'>Pasukan mempunyai pengalaman yang baik dan semangat tinggi.</small>"},{letter:"S",text:"Everything ran smoothly without conflict or disruption.<br><small style='color:var(--muted);font-style:italic'>Segalanya berjalan lancar tanpa konflik atau gangguan.</small>"},{letter:"C",text:"The work was done correctly and to the right standard.<br><small style='color:var(--muted);font-style:italic'>Kerja dilakukan dengan betul dan mengikut standard yang tepat.</small>"}]},
+  {id:13,type:"disc",text:"When facing a safety rule or SOP you think is unnecessary, you:<br><small style='color:var(--muted);font-style:italic'>Apabila berhadapan dengan peraturan keselamatan atau SOP yang anda rasa tidak perlu, anda:</small>",options:[{letter:"D",text:"Question it openly and push for a review if I think it wastes time.<br><small style='color:var(--muted);font-style:italic'>Persoalkan secara terbuka dan desak semakan jika saya rasa ia membuang masa.</small>"},{letter:"I",text:"Follow it but share my thoughts informally with teammates.<br><small style='color:var(--muted);font-style:italic'>Ikuti tetapi kongsikan pemikiran saya secara tidak rasmi dengan rakan sepasukan.</small>"},{letter:"S",text:"Follow it without question - rules exist for a reason.<br><small style='color:var(--muted);font-style:italic'>Ikuti tanpa soal – peraturan wujud atas sebab tertentu.</small>"},{letter:"C",text:"Study the reasoning behind it before deciding whether to raise a concern.<br><small style='color:var(--muted);font-style:italic'>Kaji alasan di sebaliknya sebelum memutuskan sama ada untuk bangkitkan kebimbangan.</small>"}]},
+  {id:14,type:"disc",text:"How do you typically respond to repetitive, routine tasks?<br><small style='color:var(--muted);font-style:italic'>Bagaimana anda biasanya bertindak balas terhadap tugas-tugas berulang dan rutin?</small>",options:[{letter:"D",text:"I find them boring and look for ways to do them faster or improve them.<br><small style='color:var(--muted);font-style:italic'>Saya dapati ia membosankan dan mencari cara untuk melakukannya lebih cepat atau memperbaikinya.</small>"},{letter:"I",text:"I find ways to make them social - I prefer working alongside others.<br><small style='color:var(--muted);font-style:italic'>Saya cari cara untuk menjadikannya sosial – saya lebih suka bekerja bersama orang lain.</small>"},{letter:"S",text:"I don't mind - routine tasks give me a sense of consistency and control.<br><small style='color:var(--muted);font-style:italic'>Saya tidak keberatan – tugas rutin memberi saya rasa konsistensi dan kawalan.</small>"},{letter:"C",text:"I appreciate routine - it allows me to achieve consistent quality.<br><small style='color:var(--muted);font-style:italic'>Saya menghargai rutin – ia membolehkan saya mencapai kualiti yang konsisten.</small>"}]},
+  {id:15,type:"disc",text:"You are given a tight deadline with limited resources. You:<br><small style='color:var(--muted);font-style:italic'>Anda diberi tarikh akhir yang ketat dengan sumber yang terhad. Anda:</small>",options:[{letter:"D",text:"Prioritise ruthlessly, take charge, and push through.<br><small style='color:var(--muted);font-style:italic'>Utamakan tanpa kompromi, ambil alih, dan teruskan.</small>"},{letter:"I",text:"Rally the team's energy and tackle it together with enthusiasm.<br><small style='color:var(--muted);font-style:italic'>Himpunkan tenaga pasukan dan tanganinya bersama-sama dengan penuh semangat.</small>"},{letter:"S",text:"Stay calm, work steadily, and avoid panic - one step at a time.<br><small style='color:var(--muted);font-style:italic'>Kekal tenang, bekerja dengan stabil, dan elak panik – satu langkah pada satu masa.</small>"},{letter:"C",text:"Quickly assess what can realistically be done well within the time.<br><small style='color:var(--muted);font-style:italic'>Nilai dengan cepat apa yang boleh dilakukan dengan baik dalam masa yang ada.</small>"}]},
+  {id:16,type:"disc",text:"Your teammates would most likely describe you as:<br><small style='color:var(--muted);font-style:italic'>Rakan sepasukan anda paling mungkin menggambarkan anda sebagai:</small>",options:[{letter:"D",text:"Driven, direct, and results-focused.<br><small style='color:var(--muted);font-style:italic'>Berdedikasi, terus terang, dan fokus kepada keputusan.</small>"},{letter:"I",text:"Enthusiastic, friendly, and energising.<br><small style='color:var(--muted);font-style:italic'>Bersemangat, mesra, dan memberi tenaga.</small>"},{letter:"S",text:"Reliable, calm, and always there when needed.<br><small style='color:var(--muted);font-style:italic'>Boleh dipercayai, tenang, dan sentiasa ada apabila diperlukan.</small>"},{letter:"C",text:"Careful, precise, and thorough.<br><small style='color:var(--muted);font-style:italic'>Berhati-hati, tepat, dan teliti.</small>"}]},
+  {id:17,type:"disc",text:"When you receive praise from your supervisor, you feel most motivated by:<br><small style='color:var(--muted);font-style:italic'>Apabila menerima pujian daripada penyelia, anda paling bermotivasi apabila:</small>",options:[{letter:"D",text:"Being recognised for achieving great results.<br><small style='color:var(--muted);font-style:italic'>Diiktiraf kerana mencapai keputusan yang cemerlang.</small>"},{letter:"I",text:"Being told you made a positive impact on the team.<br><small style='color:var(--muted);font-style:italic'>Diberitahu bahawa anda memberi impak positif kepada pasukan.</small>"},{letter:"S",text:"Being acknowledged as dependable and trustworthy.<br><small style='color:var(--muted);font-style:italic'>Diakui sebagai seseorang yang boleh dipercayai dan amanah.</small>"},{letter:"C",text:"Being appreciated for the quality and accuracy of your work.<br><small style='color:var(--muted);font-style:italic'>Dihargai atas kualiti dan ketepatan kerja anda.</small>"}]},
+  {id:18,type:"disc",text:"When you are under stress, people around you would notice you:<br><small style='color:var(--muted);font-style:italic'>Apabila anda berada di bawah tekanan, orang di sekeliling anda akan perasan bahawa anda:</small>",options:[{letter:"D",text:"Becoming sharper, more impatient, and more demanding.<br><small style='color:var(--muted);font-style:italic'>Menjadi lebih tajam, tidak sabar, dan lebih menuntut.</small>"},{letter:"I",text:"Talking more, seeking reassurance, or becoming emotional.<br><small style='color:var(--muted);font-style:italic'>Bercakap lebih banyak, mencari kepastian, atau menjadi emosional.</small>"},{letter:"S",text:"Withdrawing quietly and becoming reluctant to act.<br><small style='color:var(--muted);font-style:italic'>Menarik diri dengan senyap dan menjadi teragak-agak untuk bertindak.</small>"},{letter:"C",text:"Becoming more critical, cautious, and slow to decide.<br><small style='color:var(--muted);font-style:italic'>Menjadi lebih kritikal, berhati-hati, dan lambat membuat keputusan.</small>"}]},
+  {id:19,type:"disc",text:"What is your biggest frustration when working with others?<br><small style='color:var(--muted);font-style:italic'>Apakah kekecewaan terbesar anda apabila bekerja dengan orang lain?</small>",options:[{letter:"D",text:"People who are slow, indecisive, or resistant to getting things done.<br><small style='color:var(--muted);font-style:italic'>Orang yang lambat, tidak tegas, atau enggan menyelesaikan perkara.</small>"},{letter:"I",text:"People who are overly negative, cold, or dismissive of the team.<br><small style='color:var(--muted);font-style:italic'>Orang yang terlalu negatif, dingin, atau tidak peduli dengan pasukan.</small>"},{letter:"S",text:"People who create conflict or constantly change plans without reason.<br><small style='color:var(--muted);font-style:italic'>Orang yang mewujudkan konflik atau sentiasa mengubah rancangan tanpa sebab.</small>"},{letter:"C",text:"People who rush and cut corners without checking quality.<br><small style='color:var(--muted);font-style:italic'>Orang yang tergesa-gesa dan memotong jalan tanpa menyemak kualiti.</small>"}]},
+  {id:20,type:"disc",text:"If you had to choose, what is your most natural strength at work?<br><small style='color:var(--muted);font-style:italic'>Jika anda terpaksa memilih, apakah kekuatan paling semula jadi anda di tempat kerja?</small>",options:[{letter:"D",text:"Getting things done and pushing through obstacles to hit targets.<br><small style='color:var(--muted);font-style:italic'>Menyelesaikan perkara dan mengatasi halangan untuk mencapai sasaran.</small>"},{letter:"I",text:"Motivating, engaging, and connecting people.<br><small style='color:var(--muted);font-style:italic'>Memotivasikan, melibatkan, dan menghubungkan orang ramai.</small>"},{letter:"S",text:"Being the person people rely on - steady, loyal, and supportive.<br><small style='color:var(--muted);font-style:italic'>Menjadi orang yang diandalkan – stabil, setia, dan suka membantu.</small>"},{letter:"C",text:"Ensuring work is accurate, compliant, and done to the right standard.<br><small style='color:var(--muted);font-style:italic'>Memastikan kerja adalah tepat, patuh, dan dilakukan mengikut standard yang betul.</small>"}]},
+  {id:21,type:"lri",dimension:"self-awareness",text:"I understand how my mood and behaviour affects my teammates and the atmosphere around me.<br><small style='color:var(--muted);font-style:italic'>Saya faham bagaimana mood dan tingkah laku saya memberi kesan kepada rakan sepasukan dan suasana di sekeliling saya.</small>",options:[{value:1,text:"Rarely. I focus on my own tasks, not how others feel.<br><small style='color:var(--muted);font-style:italic'>Jarang. Saya fokus pada tugas sendiri, bukan perasaan orang lain.</small>"},{value:2,text:"Sometimes, when someone points it out to me.<br><small style='color:var(--muted);font-style:italic'>Kadang-kadang, apabila seseorang mengingatkan saya.</small>"},{value:3,text:"Often. I check in with myself and try to manage my impact.<br><small style='color:var(--muted);font-style:italic'>Kerap. Saya muhasabah diri dan cuba mengurus impak saya.</small>"},{value:4,text:"Almost always. I actively monitor my emotional impact on the team.<br><small style='color:var(--muted);font-style:italic'>Hampir selalu. Saya secara aktif memantau impak emosi saya terhadap pasukan.</small>"}]},
+  {id:22,type:"lri",dimension:"initiative",text:"When I notice a problem or safety risk that no one else has spotted, I:<br><small style='color:var(--muted);font-style:italic'>Apabila saya perasan masalah atau risiko keselamatan yang tiada orang lain perasan, saya:</small>",options:[{value:1,text:"Wait for my supervisor to notice and handle it.<br><small style='color:var(--muted);font-style:italic'>Tunggu penyelia saya perasan dan menanganinya.</small>"},{value:2,text:"Mention it to my supervisor and leave it for them to deal with.<br><small style='color:var(--muted);font-style:italic'>Beritahu penyelia saya dan serahkan kepada mereka untuk tanganinya.</small>"},{value:3,text:"Report it and suggest a possible solution.<br><small style='color:var(--muted);font-style:italic'>Laporkannya dan cadangkan penyelesaian yang mungkin.</small>"},{value:4,text:"Take immediate steps to address it myself or lead the resolution.<br><small style='color:var(--muted);font-style:italic'>Ambil langkah segera untuk menanganinya sendiri atau pimpin penyelesaiannya.</small>"}]},
+  {id:23,type:"lri",dimension:"communication",text:"I feel confident sharing my ideas or concerns with people above me in the organisation.<br><small style='color:var(--muted);font-style:italic'>Saya berasa yakin untuk berkongsi idea atau kebimbangan dengan orang yang lebih tinggi daripada saya dalam organisasi.</small>",options:[{value:1,text:"Not at all. It makes me very uncomfortable.<br><small style='color:var(--muted);font-style:italic'>Langsung tidak. Ia membuatkan saya sangat tidak selesa.</small>"},{value:2,text:"I can do it but feel nervous and avoid it when possible.<br><small style='color:var(--muted);font-style:italic'>Saya boleh lakukan tetapi berasa gementar dan mengelakkannya jika boleh.</small>"},{value:3,text:"Mostly confident when I'm well-prepared.<br><small style='color:var(--muted);font-style:italic'>Kebanyakannya yakin apabila saya bersedia dengan baik.</small>"},{value:4,text:"Very confident. I actively raise concerns and ideas to management.<br><small style='color:var(--muted);font-style:italic'>Sangat yakin. Saya secara aktif membangkitkan kebimbangan dan idea kepada pengurusan.</small>"}]},
+  {id:24,type:"lri",dimension:"resilience",text:"After a setback or failure at work (e.g., missed target, rejected work), I:<br><small style='color:var(--muted);font-style:italic'>Selepas kemunduran atau kegagalan di tempat kerja (cth. terlepas sasaran, kerja ditolak), saya:</small>",options:[{value:1,text:"Struggle to recover and it affects my mood for a long time.<br><small style='color:var(--muted);font-style:italic'>Sukar untuk pulih dan ia mempengaruhi mood saya untuk masa yang lama.</small>"},{value:2,text:"Take a while, but I eventually get back to normal.<br><small style='color:var(--muted);font-style:italic'>Ambil masa, tetapi akhirnya saya kembali normal.</small>"},{value:3,text:"Reflect briefly, learn from it, and refocus fairly quickly.<br><small style='color:var(--muted);font-style:italic'>Muhasabah sebentar, belajar daripadanya, dan fokus semula dengan agak cepat.</small>"},{value:4,text:"Bounce back fast, adapt my approach, and help others do the same.<br><small style='color:var(--muted);font-style:italic'>Bangkit semula dengan cepat, sesuaikan pendekatan saya, dan bantu orang lain melakukan perkara yang sama.</small>"}]},
+  {id:25,type:"lri",dimension:"influence",text:"When I believe in an idea or a better way of doing something at work, I can usually get others to support it.<br><small style='color:var(--muted);font-style:italic'>Apabila saya percaya pada idea atau cara yang lebih baik untuk melakukan sesuatu di tempat kerja, saya biasanya boleh mendapatkan sokongan orang lain.</small>",options:[{value:1,text:"Rarely. I don't feel confident enough to persuade others.<br><small style='color:var(--muted);font-style:italic'>Jarang. Saya tidak berasa cukup yakin untuk meyakinkan orang lain.</small>"},{value:2,text:"Sometimes, if they already agree with me.<br><small style='color:var(--muted);font-style:italic'>Kadang-kadang, jika mereka sudah bersetuju dengan saya.</small>"},{value:3,text:"Often. I know how to explain and make a convincing case.<br><small style='color:var(--muted);font-style:italic'>Kerap. Saya tahu cara menerangkan dan membuat hujah yang meyakinkan.</small>"},{value:4,text:"Almost always. Influencing others toward better outcomes is a natural strength.<br><small style='color:var(--muted);font-style:italic'>Hampir selalu. Mempengaruhi orang lain ke arah hasil yang lebih baik adalah kekuatan semula jadi saya.</small>"}]},
+  {id:26,type:"lri",dimension:"accountability",text:"When something goes wrong on my team or shift, I:<br><small style='color:var(--muted);font-style:italic'>Apabila sesuatu yang tidak kena berlaku dalam pasukan atau syif saya, saya:</small>",options:[{value:1,text:"Hope someone else takes responsibility and sorts it out.<br><small style='color:var(--muted);font-style:italic'>Berharap orang lain mengambil tanggungjawab dan menyelesaikannya.</small>"},{value:2,text:"Acknowledge my part privately but avoid saying so openly.<br><small style='color:var(--muted);font-style:italic'>Akui bahagian saya secara peribadi tetapi elak mengatakannya secara terbuka.</small>"},{value:3,text:"Take ownership of my contribution and work to fix it.<br><small style='color:var(--muted);font-style:italic'>Ambil tanggungjawab atas sumbangan saya dan berusaha untuk memperbaikinya.</small>"},{value:4,text:"Take full ownership and lead the team through the recovery, regardless of who caused it.<br><small style='color:var(--muted);font-style:italic'>Ambil tanggungjawab penuh dan pimpin pasukan melalui pemulihan, tanpa mengira siapa yang menyebabkannya.</small>"}]},
+  {id:27,type:"lri",dimension:"growth-mindset",text:"I actively look for ways to improve my own skills and performance at work.<br><small style='color:var(--muted);font-style:italic'>Saya secara aktif mencari cara untuk meningkatkan kemahiran dan prestasi saya di tempat kerja.</small>",options:[{value:1,text:"Rarely. I focus on just getting my current tasks done.<br><small style='color:var(--muted);font-style:italic'>Jarang. Saya fokus hanya pada menyelesaikan tugas semasa saya.</small>"},{value:2,text:"Occasionally, when training is offered to me.<br><small style='color:var(--muted);font-style:italic'>Sekali-sekala, apabila latihan ditawarkan kepada saya.</small>"},{value:3,text:"Regularly. I seek feedback and learn from mistakes.<br><small style='color:var(--muted);font-style:italic'>Kerap. Saya mencari maklum balas dan belajar daripada kesilapan.</small>"},{value:4,text:"Consistently. I proactively seek training, feedback, and new challenges.<br><small style='color:var(--muted);font-style:italic'>Secara konsisten. Saya secara proaktif mencari latihan, maklum balas, dan cabaran baharu.</small>"}]},
+  {id:28,type:"lri",dimension:"team-development",text:"When I see a colleague struggling with a task or skill I know well, I:<br><small style='color:var(--muted);font-style:italic'>Apabila saya melihat rakan sekerja bergelut dengan tugas atau kemahiran yang saya tahu dengan baik, saya:</small>",options:[{value:1,text:"Focus on my own work - it's not my responsibility.<br><small style='color:var(--muted);font-style:italic'>Fokus pada kerja saya sendiri – itu bukan tanggungjawab saya.</small>"},{value:2,text:"Report it to my supervisor and let them handle it.<br><small style='color:var(--muted);font-style:italic'>Laporkan kepada penyelia saya dan biarkan mereka menanganinya.</small>"},{value:3,text:"Offer informal help and share what I know when I can.<br><small style='color:var(--muted);font-style:italic'>Tawarkan bantuan tidak rasmi dan kongsikan apa yang saya tahu apabila mampu.</small>"},{value:4,text:"Proactively coach them and invest time in their development.<br><small style='color:var(--muted);font-style:italic'>Secara proaktif bimbing mereka dan luangkan masa untuk pembangunan mereka.</small>"}]},
+];
+const DISC_PROFILES = {
+  D:{name:"The Driver",tagline:"Results-focused, decisive, and direct. Natural authority figures who thrive under pressure and take ownership fast.",strengths:["Moves quickly through obstacles","Sets clear direction and goals","Takes ownership without hesitation","High drive for results and output"],growth:["May overpower quieter team members","Can skip collaborative planning","May appear impatient or aggressive under stress"],leadershipFit:"Strong potential for supervisory and team leadership roles. Most effective when coached on empathy, active listening, and inclusive decision-making."},
+  I:{name:"The Influencer",tagline:"People-centred, inspiring, and energetic. Natural motivators who build strong team culture and drive engagement.",strengths:["Builds morale and enthusiasm","Exceptional communicator and persuader","Brings people together","Drives creativity and positive change"],growth:["May avoid difficult conversations","Can lose focus on procedural detail","Enthusiasm may mask poor planning"],leadershipFit:"Excellent for roles requiring team motivation, change management, and people development. Needs coaching on following through on detail and holding others accountable."},
+  S:{name:"The Supporter",tagline:"Dependable, patient, and team-first. The backbone of any high-functioning team - consistent under pressure.",strengths:["Highly reliable and consistent","Creates psychological safety for others","Excellent listener and conflict mediator","Loyal through difficult periods"],growth:["May avoid conflict even when necessary","Can resist urgent or necessary change","Tends to underestimate own leadership capability"],leadershipFit:"Outstanding for supervisory roles requiring team cohesion and trust. High potential with coaching on assertiveness, speaking up, and faster decision-making."},
+  C:{name:"The Analyst",tagline:"Precise, systematic, and quality-driven. Natural process improvers who ensure accuracy and compliance.",strengths:["Unmatched attention to detail","Ensures accuracy and compliance","Strong critical and analytical thinker","Excellent at diagnosing root causes"],growth:["Can become paralysed by perfectionism","May struggle with interpersonal warmth","Tends to over-analyse before acting"],leadershipFit:"Strong in technical and quality leadership. Needs development in influencing, storytelling, and building team motivation beyond task compliance."},
+};
+const LRI_DIMENSIONS = {"self-awareness":"Self-Awareness","initiative":"Initiative & Proactivity","communication":"Communication Confidence","resilience":"Resilience","influence":"Influence & Persuasion","accountability":"Accountability","growth-mindset":"Growth Mindset","team-development":"Developing Others"};
+
+// STATE
+let dassAnswers={}, leadAnswers={};
+let participantName='', participantDept='', participantRole='', participantYears='';
+
+// NAVIGATION
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  const el=document.getElementById(id);
+  el.classList.add('active');
+  el.classList.add('fade-in');
+  window.scrollTo({top:0,left:0,behavior:'instant'});
+  document.documentElement.scrollTop=0;
+  document.body.scrollTop=0;
+  el.scrollIntoView({block:'start',behavior:'instant'});
+}
+
+function submitParticipant(){
+  const name=document.getElementById('p-name').value.trim();
+  const dept=document.getElementById('p-dept').value.trim();
+  const err=document.getElementById('p-error');
+  if(!name||!dept){err.style.display='block';return;}
+  err.style.display='none';
+  participantName=name; participantDept=dept;
+  participantRole=document.getElementById('p-role').value.trim();
+  participantYears=document.getElementById('p-years').value;
+  startPart(1);
+}
+
+function startPart(part){
+  if(part===1){renderDASS();showScreen('dass-screen');}
+  else{renderLead();showScreen('lead-screen');}
+}
+
+// DASS
+function renderDASS(){
+  const c=document.getElementById('dass-questions');
+  const sbColors={D:'var(--dep)',A:'var(--anx)',S:'var(--str)'};
+  const sbBgs={D:'var(--dep-bg)',A:'var(--anx-bg)',S:'var(--str-bg)'};
+  c.innerHTML=DASS_QUESTIONS.map(q=>`
+    <div class="q-card" id="dc-${q.id}">
+      <div class="q-meta"><span>Q${q.id} of 21</span><span class="q-subscale" style="background:${sbBgs[q.subscale]};color:${sbColors[q.subscale]}">${q.sub}</span></div>
+      <div class="q-text">${q.text}</div>
+      <div class="options-row">${[0,1,2,3].map(v=>`<div class="opt-btn" id="do-${q.id}-${v}" onclick="selDASS(${q.id},${v})"><div class="opt-num">${v}</div><div class="opt-label">${['Never<br>Tidak Pernah','Sometimes<br>Kadang-kadang','Often<br>Kerap','Always<br>Selalu'][v]}</div></div>`).join('')}</div>
+    </div>`).join('');
+}
+function selDASS(qId,val){
+  dassAnswers[qId]=val;
+  [0,1,2,3].forEach(v=>document.getElementById(`do-${qId}-${v}`).classList.toggle('active',v===val));
+  document.getElementById(`dc-${qId}`).classList.add('answered');
+  const n=Object.keys(dassAnswers).length;
+  document.getElementById('dass-progress').style.width=(n/21*100)+'%';
+  document.getElementById('dass-counter').textContent=n+'/21';
+  document.getElementById('dass-answered').textContent=n+' of 21 answered / '+n+' daripada 21 dijawab';
+}
+function submitDASS(){
+  if(Object.keys(dassAnswers).length<21){
+    const f=DASS_QUESTIONS.find(q=>dassAnswers[q.id]===undefined);
+    if(f){document.getElementById(`dc-${f.id}`).scrollIntoView({behavior:'smooth',block:'center'});document.getElementById(`dc-${f.id}`).style.borderColor='#e05a4b';setTimeout(()=>document.getElementById(`dc-${f.id}`).style.borderColor='',2000);}
+    return;
+  }
+  showScreen('transition-screen');
+}
+
+// LEADERSHIP
+function renderLead(){
+  const c=document.getElementById('lead-questions');
+  c.innerHTML=LEAD_QUESTIONS.map(q=>{
+    const isDisc=q.type==='disc';
+    const tag=isDisc?`<span class="q-subscale" style="background:var(--gold-bg);color:var(--gold)">DISC</span>`:`<span class="q-subscale" style="background:var(--dep-bg);color:var(--dep)">Leadership / Kepimpinan</span>`;
+    const opts=q.options.map((opt,i)=>{
+      if(isDisc) return `<div class="lead-opt" id="lo-${q.id}-${i}" onclick="selLead(${q.id},${i},'${opt.letter}')"><div class="lead-opt-text">${opt.text}</div></div>`;
+      return `<div class="lead-opt" id="lo-${q.id}-${i}" onclick="selLead(${q.id},${i},${opt.value})"><div class="lead-opt-text">${opt.text}</div></div>`;
+    }).join('');
+    return `<div class="q-card" id="lc-${q.id}"><div class="q-meta"><span>Q${q.id} of 28</span>${tag}</div><div class="q-text">${q.text}</div><div class="lead-options">${opts}</div></div>`;
+  }).join('');
+}
+function selLead(qId,optIdx,val){
+  leadAnswers[qId]=val;
+  const q=LEAD_QUESTIONS.find(q=>q.id===qId);
+  q.options.forEach((_,i)=>document.getElementById(`lo-${qId}-${i}`).classList.toggle('active',i===optIdx));
+  document.getElementById(`lc-${qId}`).classList.add('answered');
+  const n=Object.keys(leadAnswers).length;
+  document.getElementById('lead-progress').style.width=(n/28*100)+'%';
+  document.getElementById('lead-counter').textContent=n+'/28';
+  document.getElementById('lead-answered').textContent=n+' of 28 answered / '+n+' daripada 28 dijawab';
+}
+function submitLead(){
+  if(Object.keys(leadAnswers).length<28){
+    const f=LEAD_QUESTIONS.find(q=>leadAnswers[q.id]===undefined);
+    if(f){document.getElementById(`lc-${f.id}`).scrollIntoView({behavior:'smooth',block:'center'});document.getElementById(`lc-${f.id}`).style.borderColor='#e05a4b';setTimeout(()=>document.getElementById(`lc-${f.id}`).style.borderColor='',2000);}
+    return;
+  }
+  showScreen('results-screen');
+  document.getElementById('results-body-inner').innerHTML='<div style="text-align:center;padding:80px 20px"><div class="spinner" style="margin:0 auto 16px"></div><p style="font-size:14px;color:var(--muted)">Analysing your results... / <em>Menganalisis keputusan anda...</em></p></div>';
+  setTimeout(buildResults,800);
+}
+
+// RESULTS
+function buildResults(){
+  const inner=document.getElementById('results-body-inner');
+  if(inner) inner.innerHTML=`
+    <div class="section-divider"><div class="section-divider-line"></div><div class="section-divider-label">Part 1: Emotional Wellbeing (DASS-21) / Bahagian 1: Kesejahteraan Emosi</div><div class="section-divider-line"></div></div>
+    <div class="dass-grid" id="dass-result-grid"></div>
+    <div id="dep-bar-row" class="dass-bar-row"></div>
+    <div id="anx-bar-row" class="dass-bar-row"></div>
+    <div id="str-bar-row" class="dass-bar-row"></div>
+    <div class="interp-box" id="dass-interpretation"></div>
+    <div class="interp-box" id="perf-link" style="margin-top:10px;border-left:3px solid var(--gold)"></div>
+    <div class="section-divider"><div class="section-divider-line"></div><div class="section-divider-label">Part 2: Leadership Potential Profile / Bahagian 2: Profil Potensi Kepimpinan</div><div class="section-divider-line"></div></div>
+    <div class="disc-result" id="disc-result-card"></div>
+    <div class="potential-card" id="leadership-readiness" style="margin-top:12px"></div>
+    <div class="rec-box" id="final-rec"></div>
+    <div id="submit-banner" class="submit-banner" style="margin-top:16px">
+      <div class="submit-icon">☁</div>
+      <div class="submit-msg">Submitting your results... / <em>Menghantar keputusan anda...</em></div>
+      <div class="submit-sub">Please wait a moment. / <em>Sila tunggu sebentar.</em></div>
+    </div>
+    <div class="restart-btn">
+      <button class="btn btn-outline" onclick="restartAll()">Start New Assessment / <em>Mulakan Penilaian Baharu</em></button>
+    </div>
+  `;
+  const depItems=[3,5,10,13,16,17,21], anxItems=[2,4,7,9,15,19,20], strItems=[1,6,8,11,12,14,18];
+  const rawDep=depItems.reduce((s,i)=>s+(dassAnswers[i]||0),0)*2;
+  const rawAnx=anxItems.reduce((s,i)=>s+(dassAnswers[i]||0),0)*2;
+  const rawStr=strItems.reduce((s,i)=>s+(dassAnswers[i]||0),0)*2;
+  const getSev=(score,type)=>DASS_THRESHOLDS[type].find(t=>score<=t.max);
+  const depSev=getSev(rawDep,'D'), anxSev=getSev(rawAnx,'A'), strSev=getSev(rawStr,'S');
+  const discCounts={D:0,I:0,S:0,C:0};
+  LEAD_QUESTIONS.filter(q=>q.type==='disc').forEach(q=>{if(leadAnswers[q.id])discCounts[leadAnswers[q.id]]++;});
+  const discMax=Math.max(...Object.values(discCounts));
+  const primaryDisc=Object.keys(discCounts).find(k=>discCounts[k]===discMax)||'S';
+  const lriDimensions={};
+  LEAD_QUESTIONS.filter(q=>q.type==='lri').forEach(q=>{lriDimensions[q.dimension]=(leadAnswers[q.id]||1);});
+  const lriTotal=Object.values(lriDimensions).reduce((s,v)=>s+v,0);
+  const lriPercent=Math.round(lriTotal/32*100);
+  const lriLabel=lriPercent>=80?'High Potential Leader / Pemimpin Berpotensi Tinggi':lriPercent>=60?'Emerging Leader / Pemimpin Muncul':lriPercent>=40?'Developing Potential / Potensi Sedang Berkembang':'Foundation Building / Membina Asas';
+  const lriColor=lriPercent>=80?'#2e8b57':lriPercent>=60?'#d4820a':lriPercent>=40?'#2c5f9e':'#8a8680';
+  const discColors={D:'#c84b3b',I:'#d4820a',S:'#2e8b57',C:'#2c5f9e'};
+  const sevBM={Normal:'Normal',Mild:'Ringan',Moderate:'Sederhana',Severe:'Teruk','Extremely Severe':'Sangat Teruk'};
+
+  document.getElementById('result-date').textContent=new Date().toLocaleDateString('en-MY',{day:'numeric',month:'long',year:'numeric'});
+  document.getElementById('results-participant').innerHTML=[participantName,participantDept,participantRole,participantYears].filter(Boolean).map(v=>`<span style="margin-right:14px">${v}</span>`).join('');
+
+  // DASS grid
+  document.getElementById('dass-result-grid').innerHTML=[
+    {label:'Depression / Kemurungan',score:rawDep,sev:depSev,color:'var(--dep)'},
+    {label:'Anxiety / Kebimbangan',score:rawAnx,sev:anxSev,color:'var(--anx)'},
+    {label:'Stress / Tekanan',score:rawStr,sev:strSev,color:'var(--str)'}
+  ].map(d=>`<div class="dass-card"><div class="dass-card-label" style="color:${d.color}">${d.label}</div><div class="dass-card-score" style="color:${d.color}">${d.score}</div><div class="severity-badge" style="background:${d.sev.bg};color:${d.sev.color}">${d.sev.label}<br><span style="font-size:9px;font-weight:400;font-style:italic">${sevBM[d.sev.label]||d.sev.label}</span></div></div>`).join('');
+
+  [{id:'dep-bar-row',label:'Depression / Kemurungan',score:rawDep,color:'var(--dep)'},{id:'anx-bar-row',label:'Anxiety / Kebimbangan',score:rawAnx,color:'var(--anx)'},{id:'str-bar-row',label:'Stress / Tekanan',score:rawStr,color:'var(--str)'}].forEach(b=>{
+    document.getElementById(b.id).innerHTML=`<div class="dass-bar-label">${b.label}</div><div class="dass-bar-track"><div class="dass-bar-fill" data-target="${Math.min(b.score/42*100,100).toFixed(1)}" style="background:${b.color}"></div></div><div class="dass-bar-val">${b.score}/42</div>`;
+  });
+
+  const sevs=[depSev.label,anxSev.label,strSev.label];
+  const hasConcern=sevs.some(s=>['Moderate','Severe','Extremely Severe'].includes(s));
+  const allNormal=sevs.every(s=>s==='Normal');
+  document.getElementById('dass-interpretation').innerHTML=allNormal
+    ?`<div class="interp-header"><div class="interp-icon">✅</div><div><div class="interp-title">Positive Wellbeing State / <em>Tahap Kesejahteraan Positif</em></div><div class="interp-level">All subscales within normal range / <em>Semua subskala dalam julat normal</em></div></div></div><div class="interp-text">Your emotional wellbeing scores are all within the normal range. You are managing the demands of your work and personal life effectively at this time.<br><br><em style="color:var(--muted)">Skor kesejahteraan emosi anda semuanya dalam julat normal. Anda mengurus tuntutan kerja dan kehidupan peribadi dengan berkesan pada masa ini.</em></div><div class="interp-tags"><span class="interp-tag">Emotionally stable / Stabil dari segi emosi</span><span class="interp-tag">Performance-ready / Bersedia untuk prestasi</span></div>`
+    :hasConcern
+    ?`<div class="interp-header"><div class="interp-icon">🔴</div><div><div class="interp-title">Elevated Emotional Distress Detected / <em>Tekanan Emosi Tinggi Dikesan</em></div><div class="interp-level">One or more subscales at moderate-to-severe level / <em>Satu atau lebih subskala pada tahap sederhana hingga teruk</em></div></div></div><div class="interp-text">Your scores indicate a meaningful level of psychological distress in one or more areas. The psychologist will discuss this confidentially with you.<br><br><em style="color:var(--muted)">Skor anda menunjukkan tahap tekanan psikologi yang bermakna dalam satu atau lebih kawasan. Ahli psikologi akan membincangkan perkara ini secara sulit dengan anda.</em></div><div class="interp-tags"><span class="interp-tag">Confidential follow-up available / <em>Susulan sulit tersedia</em></span><span class="interp-tag">Actionable through programme intervention / <em>Boleh ditangani melalui intervensi program</em></span></div>`
+    :`<div class="interp-header"><div class="interp-icon">🟡</div><div><div class="interp-title">Mild Emotional Load Detected / <em>Beban Emosi Ringan Dikesan</em></div><div class="interp-level">One or more subscales in mild range / <em>Satu atau lebih subskala dalam julat ringan</em></div></div></div><div class="interp-text">Your scores suggest some mild emotional strain. This is very common in busy work environments. If left unaddressed, mild stress can gradually erode focus and communication quality.<br><br><em style="color:var(--muted)">Skor anda menunjukkan sedikit tekanan emosi ringan. Ini sangat biasa dalam persekitaran kerja yang sibuk. Jika tidak ditangani, tekanan ringan boleh secara beransur-ansur mengurangkan fokus dan kualiti komunikasi.</em></div><div class="interp-tags"><span class="interp-tag">Monitor over time / <em>Pantau dari semasa ke semasa</em></span><span class="interp-tag">Self-care recommended / <em>Penjagaan diri disyorkan</em></span></div>`;
+
+  document.getElementById('perf-link').innerHTML=`<div class="interp-header" style="margin-bottom:8px"><div class="interp-icon">⚡</div><div><div class="interp-title" style="font-size:14px">Wellbeing and Workplace Performance / <em>Kesejahteraan dan Prestasi Tempat Kerja</em></div></div></div><div class="interp-text">${allNormal?'Strong emotional baseline gives you the foundation to take on greater responsibility. The priority now is developing leadership skills and communication confidence.<br><br><em style="color:var(--muted)">Asas emosi yang kuat memberi anda landasan untuk memikul tanggungjawab yang lebih besar. Keutamaan sekarang ialah membangunkan kemahiran kepimpinan dan keyakinan komunikasi.</em>':hasConcern?'Elevated distress is directly associated with reduced cognitive performance, increased errors, and weakened communication. This is addressable through structured wellbeing and leadership programmes.<br><br><em style="color:var(--muted)">Tekanan tinggi dikaitkan secara langsung dengan prestasi kognitif yang berkurang, peningkatan kesilapan, dan komunikasi yang lemah. Ini boleh ditangani melalui program kesejahteraan dan kepimpinan berstruktur.</em>':'Mild emotional load at scale is one of the most underestimated drivers of team performance loss. Early intervention through self-care and resilience training prevents escalation.<br><br><em style="color:var(--muted)">Beban emosi ringan adalah salah satu penyebab yang paling kurang dianggarkan bagi kehilangan prestasi pasukan. Intervensi awal melalui penjagaan diri dan latihan ketahanan mencegah peningkatan.</em>'}</div>`;
+
+  const profile=DISC_PROFILES[primaryDisc];
+  document.getElementById('disc-result-card').innerHTML=`
+    <div class="disc-top"><div class="disc-badge-large" style="background:${discColors[primaryDisc]}">${primaryDisc}</div><div><div class="disc-name">${primaryDisc}: ${profile.name}</div><div class="disc-tagline">${profile.tagline}</div></div></div>
+    <div class="disc-bar-cols">${['D','I','S','C'].map(t=>`<div class="disc-col"><div class="disc-col-track"><div class="disc-col-fill" data-target="${(discCounts[t]/20*100).toFixed(1)}%" style="background:${discColors[t]}"></div></div><div class="disc-col-label" style="color:${discColors[t]}">${t}</div><div class="disc-col-val">${discCounts[t]}/20</div></div>`).join('')}</div>
+    <div class="strength-grid"><div class="strength-item"><div class="strength-label">Key Strengths / Kekuatan Utama</div><div class="strength-text">${profile.strengths.map(s=>'• '+s).join('<br>')}</div></div><div class="strength-item"><div class="strength-label">Growth Areas / Kawasan Pertumbuhan</div><div class="strength-text">${profile.growth.map(s=>'• '+s).join('<br>')}</div></div><div class="strength-item" style="grid-column:1/-1"><div class="strength-label">Leadership Fit / Kesesuaian Kepimpinan</div><div class="strength-text">${profile.leadershipFit}</div></div></div>`;
+
+  const gc=2*Math.PI*40, gd=(lriPercent/100)*gc;
+  document.getElementById('leadership-readiness').innerHTML=`
+    <div style="font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:16px">Leadership Readiness Index / <em>Indeks Kesediaan Kepimpinan</em></div>
+    <div class="potential-score-row">
+      <svg class="potential-gauge" width="90" height="90" viewBox="0 0 100 100"><circle cx="50" cy="50" r="40" fill="none" stroke="var(--border)" stroke-width="8"/><circle cx="50" cy="50" r="40" fill="none" stroke="${lriColor}" stroke-width="8" stroke-dasharray="${gd.toFixed(1)} ${gc.toFixed(1)}" stroke-dashoffset="${(gc/4).toFixed(1)}" stroke-linecap="round"/><text x="50" y="54" text-anchor="middle" font-size="18" font-weight="600" fill="${lriColor}" font-family="Inter,sans-serif">${lriPercent}%</text></svg>
+      <div><div class="potential-verdict" style="color:${lriColor}">${lriLabel}</div><div class="potential-sub">Score / Skor: ${lriTotal}/32 across 8 leadership dimensions / merentasi 8 dimensi kepimpinan</div></div>
+    </div>
+    <div class="dimension-grid">${Object.entries(lriDimensions).map(([dim,score])=>`<div><div class="dim-header"><div class="dim-name">${LRI_DIMENSIONS[dim]}</div><div class="dim-score">${score}/4</div></div><div class="dim-track"><div class="dim-fill" data-target="${(score/4*100)}%" style="background:var(--dep)"></div></div></div>`).join('')}</div>`;
+
+  document.getElementById('final-rec').innerHTML=`<div class="rec-title">Kytech Development Recommendation / <em>Cadangan Pembangunan Kytech</em></div><div class="rec-text">Based on your DISC profile (${primaryDisc}: ${profile.name}) and Leadership Readiness Index score of ${lriPercent}%, ${lriPercent>=70?'you demonstrate strong leadership potential. With structured development through the AMPLIFY or ZEEP programme, this potential can be channelled into measurable leadership capability.':lriPercent>=50?'you show genuine emerging leadership potential ready to be developed. A structured programme would directly address the specific dimensions where you scored lower.':'your foundation-building stage is entirely normal. A structured programme would accelerate your readiness significantly within 3 to 6 months.'}<br><br><em style="color:rgba(255,255,255,.5)">Berdasarkan profil DISC anda (${primaryDisc}: ${profile.name}) dan skor Indeks Kesediaan Kepimpinan ${lriPercent}%, ${lriPercent>=70?'anda menunjukkan potensi kepimpinan yang kukuh. Dengan pembangunan berstruktur melalui program AMPLIFY atau ZEEP, potensi ini boleh disalurkan kepada keupayaan kepimpinan yang boleh diukur.':lriPercent>=50?'anda menunjukkan potensi kepimpinan muncul yang tulen dan bersedia untuk dikembangkan. Program berstruktur akan menangani secara langsung dimensi-dimensi spesifik di mana anda mendapat skor lebih rendah.':'tahap pembinaan asas anda adalah normal sepenuhnya. Program berstruktur akan mempercepatkan kesediaan anda dengan ketara dalam tempoh 3 hingga 6 bulan.'}</em></div><div class="rec-tags"><span class="rec-tag">${primaryDisc}: ${profile.name}</span><span class="rec-tag">${lriLabel}</span><span class="rec-tag">${allNormal?'Strong Wellbeing Foundation / Asas Kesejahteraan Kukuh':'Wellbeing Support Recommended / Sokongan Kesejahteraan Disyorkan'}</span></div>`;
+
+  showScreen('results-screen');
+  setTimeout(()=>{
+    document.querySelectorAll('.dass-bar-fill[data-target]').forEach(el=>{el.style.width=el.dataset.target+'%';});
+    document.querySelectorAll('.disc-col-fill[data-target]').forEach(el=>{el.style.height=el.dataset.target;});
+    document.querySelectorAll('.dim-fill[data-target]').forEach(el=>{el.style.width=el.dataset.target;});
+  },100);
+
+  // Submit to JSONBin
+  submitToCloud({
+    name:participantName, dept:participantDept, role:participantRole, years:participantYears,
+    session:SESSION_CODE,
+    dep:rawDep, anx:rawAnx, str:rawStr,
+    depLabel:depSev.label, anxLabel:anxSev.label, strLabel:strSev.label,
+    disc:primaryDisc, discCounts:{...discCounts},
+    lriTotal, lriPercent, lriLabel,
+    lriDimensions:{...lriDimensions},
+    timestamp:new Date().toISOString()
+  });
+}
+
+async function submitToCloud(data){
+  const banner=document.getElementById('submit-banner');
+  if(JSONBIN_BIN_ID==='__NEVER_MATCHES__'){
+    banner.className='submit-banner success';
+    banner.innerHTML='<div class="submit-icon">⚙️</div><div class="submit-msg">Setup required / <em>Persediaan diperlukan</em></div><div class="submit-sub">Admin needs to configure the JSONBin ID and API key. See setup guide. / <em>Admin perlu mengkonfigurasi ID JSONBin dan kunci API. Lihat panduan persediaan.</em></div>';
+    return;
+  }
+  try{
+    // Read current data first
+    const readRes=await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}/latest`,{headers:{'X-Master-Key':JSONBIN_API_KEY}});
+    const readJson=await readRes.json();
+    const existing=(readJson.record&&readJson.record.participants)||[];
+    existing.push(data);
+    // Write back
+    await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}`,{
+      method:'PUT',
+      headers:{'Content-Type':'application/json','X-Master-Key':JSONBIN_API_KEY},
+      body:JSON.stringify({participants:existing})
+    });
+    banner.className='submit-banner success';
+    banner.innerHTML='<div class="submit-icon">✅</div><div class="submit-msg">Results submitted successfully / <em>Keputusan berjaya dihantar</em></div><div class="submit-sub">Your data has been sent to the admin dashboard. Thank you! / <em>Data anda telah dihantar ke papan pemuka admin. Terima kasih!</em></div>';
+  }catch(e){
+    banner.className='submit-banner error';
+    banner.innerHTML='<div class="submit-icon">❌</div><div class="submit-msg">Could not connect to dashboard / <em>Tidak dapat menyambung ke papan pemuka</em></div><div class="submit-sub">Please tell the session admin. Your individual results above are still saved. / <em>Sila beritahu admin sesi. Keputusan individu anda di atas masih disimpan.</em></div>';
+  }
+}
+
+function restartAll(){
+  dassAnswers={}; leadAnswers={};
+  participantName=''; participantDept=''; participantRole=''; participantYears='';
+  document.getElementById('p-name').value='';
+  document.getElementById('p-dept').value='';
+  document.getElementById('p-role').value='';
+  document.getElementById('p-years').value='';
+  showScreen('cover');
+}
+</script>
+</body>
+</html>
